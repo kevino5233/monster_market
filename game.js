@@ -1,4 +1,6 @@
+//==============================================================================
 //vital dimensions
+//==============================================================================
 
 var game_w = 800;
 var game_h = 600;
@@ -7,7 +9,9 @@ var deadzone_h = 150;
 var deadzone_trig_w = (game_w - deadzone_w) / 2;
 var deadzone_trig_h = (game_h - deadzone_h) / 2;
 
+//==============================================================================
 //utility functions
+//==============================================================================
 
 //checks if the camera position needs to be updated from the deadzone
 function UpdateCamera(camera, player) {
@@ -22,6 +26,10 @@ function UpdateCamera(camera, player) {
 	camera.y = player.y;
     }
 }
+
+//==============================================================================
+//game start
+//==============================================================================
 
 //create the game object
 var game = new Phaser.Game(800, 600, Phaser.AUTO);

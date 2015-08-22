@@ -1,22 +1,23 @@
 var boot_state = {
     preload: function(){
-	game.load.image("lot_bg", "assets/parking_lot.png");
-    }
+    },
 
     loadUpdate: function(){
-    }
+    },
 
     loadRender: function(){
-    }
+    },
 
     create: function(){
-    }
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+	game.state.start("load");
+    },
 
     update: function(){
-    }
+    },
 
     resize: function(){
-    }
+    },
 
     shutdown: function(){
     }
