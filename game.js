@@ -15,15 +15,26 @@ var deadzone_trig_h = (game_h - deadzone_h) / 2;
 
 //checks if the camera position needs to be updated from the deadzone
 function UpdateCamera(camera, player) {
+    //get camera distance from player
     var cam_diff_x = player.x - camera.x;
     var cam_diff_y = player.y - camera.y;
-    if (cam_diff_x < deadzone_trig_w ||
-	cam_diff_x - deadzone_w > deadzone_trig_w){
-	camera.x = player.x;
+    //determine whether player is outside deadzone
+    var outside_deadzone_left = cam_diff_x < deadzone_trig_w;
+    var outside_deadzone_right = cam_diff_x - deadzone_w > deadzone_trig_w;
+    var outside_deadzone_up = cam_diff_y < deadzone_trig_h;
+    var outside_deadzone_down = cam_diff_y - deadzone_h > deadzone_trig_h;
+    //adjust camer accordingly
+    if (outside_deadzone_left || outside_deadzone_right){
+	camera.x = player.x - deadzone_trig_w;
+	if (outside_deadzone_right){
+	    camera.x -= deadzone_w;
+	}
     }
-    if (cam_diff_y < deadzone_trig_h ||
-	cam_diff_y - deadzone_h > deadzone_trig_h){
-	camera.y = player.y;
+    if (outside_deadzone_up || outside_deadzone_down){
+	camera.y = player.y - deadzone_trig_h;
+	if (outside_deadzone_up){
+	    camera.y -= deadzone_h;
+	}
     }
 }
 
