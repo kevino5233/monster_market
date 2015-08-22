@@ -14,15 +14,33 @@ var lot_state = {
 
 	//load sprites
 	game.add.sprite(0, 0, "lot_bg");
+	//add  and set up player
 	this.player = game.add.sprite(400, 300, "player");
 	this.player.base_velocity = 200;
 	this.player.right = true;
-	this.player.animations.add("idle_right", [0]);
-	this.player.animations.add("idle_left", [8]);
-	this.player.animations.add("walk_right", [16, 17, 18, 19], 4, true);
-	this.player.animations.add("walk_left", [24, 25, 26, 27], 4, true);
+	this.player.anchor.x = 0.5;
+	this.player.animations.add("idle", [0]);
+	this.player.animations.add("walk", [8, 9, 10, 11], 4, true);
 	game.physics.enable(this.player);
-
+	//add and setup a basic enemy
+	this.r_enemies = [];
+	var enemy = game.add.sprite(600, 400, "lot_r_enemy");
+	enemy.animations.add("idle", [0]);
+	enemy.animations.add("charge", [1], 1, false).onComplete.add(
+	    function(enemy){
+		enemy.animations.play("throw");
+		enemy.charging = true;
+	    },
+	    enemy);
+	enemy.animations.add("throw", [2], 1, false).onComplete.add(
+	    function(enemy){
+		enemy.animations.play("idle");
+		enemy.charging = false;
+	    },
+	    enemy);
+	enemy.detect_range = 64 * 3;
+	enemy.charging = false;
+	this.r_enemies.push(enemy);
 	this.cursor = game.input.keyboard.createCursorKeys();
     },
 
@@ -46,28 +64,43 @@ var lot_state = {
 	    this.player.body.velocity.x = 0;
 	}
 
-	var anim_state = "idle_left";
+	var anim_state = "idle";
 	var player_x_vel = this.player.body.velocity.x;
 	var player_y_vel = this.player.body.velocity.y;
 	if (player_x_vel || player_y_vel){
+	    anim_state = "walk";
 	    if ((!player_x_vel && this.player.right) || player_x_vel > 0){
-		anim_state = "walk_right";
 		this.player.right = true;
 	    } else {
-		anim_state = "walk_left";
 		this.player.right = false;
 	    }
 	} else {
 	    if (this.player.right){
-		anim_state = "idle_right";
 		this.player.right = true;
 	    } else {
 		this.player.right = false;
 	    }
 	}
+	if (this.player.right){
+	    this.player.scale.x = 1;
+	} else {
+	    this.player.scale.x = -1;
+	}
 	this.player.animations.play(anim_state);
 
+	this.UpdateEnemies();
+
 	UpdateCamera(game.camera, this.player);
+    },
+
+    UpdateEnemies : function(){
+	var remove_indexes = [];
+	for (var i = 0; i < this.r_enemies.length; i++){
+	    var enemy = this.r_enemies[i];
+	    if (DistanceBetween(this.player, enemy) <= enemy.detect_range && !enemy.charging){
+		enemy.animations.play("charge");
+	    }
+	}
     },
 
     resize: function(){

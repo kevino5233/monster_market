@@ -23,7 +23,7 @@ function UpdateCamera(camera, player) {
     var outside_deadzone_right = cam_diff_x - deadzone_w > deadzone_trig_w;
     var outside_deadzone_up = cam_diff_y < deadzone_trig_h;
     var outside_deadzone_down = cam_diff_y - deadzone_h > deadzone_trig_h;
-    //adjust camer accordingly
+    //adjusts camer accordingly
     if (outside_deadzone_left || outside_deadzone_right){
 	camera.x = player.x - deadzone_trig_w;
 	if (outside_deadzone_right){
@@ -36,6 +36,14 @@ function UpdateCamera(camera, player) {
 	    camera.y -= deadzone_h;
 	}
     }
+}
+
+//gets the distance between two sprites or images
+function DistanceBetween(obj_a, obj_b){
+    var diff_x = obj_a.x - obj_b.x;
+    var diff_y = obj_a.y - obj_b.y;
+    var dist_squared = diff_x * diff_x + diff_y * diff_y;
+    return Math.sqrt(dist_squared);
 }
 
 //==============================================================================
