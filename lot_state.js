@@ -11,6 +11,7 @@ var lot_state = {
     create: function(){
 	//level config
 	game.world.setBounds(0, 0, 2400, 600);
+	//this.bg_music = game.add.audio("lot_music", 1, true).play();
 
 	//load sprites
 	game.add.sprite(0, 0, "lot_bg");
@@ -61,16 +62,37 @@ var lot_state = {
 	//create melee enemy
 	enemy = game.add.sprite(600, 100, "lot_m_enemy");
 	enemy.anchor.x = 0.5;
-	enemy.animations.add("idle", [0]);
-	enemy.animations.add("walk", [8, 9, 10, 11], 8, true);
+	var idle_anim = enemy.animations.add("idle", [0]);
+	idle_anim.onStart.add(
+	    function(enemy){
+		enemy.body.velocity = {x: 0, y: 0};
+	    },
+	    enemy);
+	var walk_anim = 
+	    enemy.animations.add(
+		"walk", 
+		[8, 9, 10, 11], 
+		8, 
+		true);
+	walk_anim.onStart.add(
+	    function(enemy){
+		enemy.walking = true;
+	    },
+	    enemy);
+	walk_anim.onComplete.add(
+	    function(enemy){
+		enemy.walking = false;
+	    },
+	    enemy);
 	charge_anim = 
 	    enemy.animations.add(
 		"charge", 
 		[16, 17, 18, 18], 
-		4, 
+		8, 
 		false);
 	charge_anim.onStart.add(
 	    function(enemy){
+		enemy.body.velocity = {x: 0, y: 0};
 		enemy.charging = true;
 	    },
 	    enemy);
@@ -88,9 +110,10 @@ var lot_state = {
 		false);
 	punch_anim.onStart.add(
 	    function(enemy){
+		enemy.body.velocity = {x: 0, y: 0};
 		enemy.attacking = true;
 		//adjust later
-		enemy.body.velocity.x = 16 * enemy.scale.x;
+		enemy.body.velocity.x = 128 * enemy.scale.x;
 		//add some down time to the enemy?
 	    },
 	    enemy);
@@ -102,7 +125,9 @@ var lot_state = {
 		//add some down time to the enemy?
 	    },
 	    enemy);
-	enemy.detect_range = 64 * 2;
+	enemy.detect_range = 64 * 4;
+	enemy.attack_range = 64;
+	enemy.walking = false;
 	enemy.charging = false;
 	enemy.attacking = false;
 	game.physics.enable(enemy);
@@ -165,6 +190,7 @@ var lot_state = {
 	    var enemy = this.r_enemies[i];
 	    if (DistanceBetween(this.player, enemy) <= enemy.detect_range && 
 		!(enemy.charging || enemy.attacking)){
+		enemy.animations.currentAnim.complete();
 		enemy.animations.play("charge");
 	    }
 	}
@@ -172,14 +198,35 @@ var lot_state = {
 	remove_indexes = [];
 	for (var i = 0; i < this.m_enemies.length; i++){
 	    var enemy = this.m_enemies[i];
-	    if (DistanceBetween(this.player, enemy) <= enemy.detect_range && 
+	    var dist_player = DistanceBetween(this.player, enemy);
+	    if (dist_player <= enemy.detect_range && 
 		!(enemy.charging || enemy.attacking)){
-		if (this.player.x < enemy.x){
-		    enemy.scale.x = -1;
+		console.log("shit");
+		if (dist_player <= enemy.attack_range){
+		    enemy.animations.currentAnim.complete();
+		    enemy.animations.play("charge");
 		} else {
-		    enemy.scale.x = 1;
+		    if (!enemy.walking){
+			enemy.animations.currentAnim.complete();
+			enemy.animations.play("walk");
+		    }
+		    var diff_y = this.player.y - enemy.y;
+		    var diff_x = this.player.x - enemy.x;
+		    if (diff_x < 0){
+			enemy.scale.x = -1;
+			diff_x += 64;
+		    } else {
+			enemy.scale.x = 1;
+		    }
+		    if (Math.abs(diff_y) > Math.abs(diff_x)){
+			enemy.body.velocity.y = 128 * (diff_y > 0 ? 1 : -1);
+		    } else {
+			enemy.body.velocity.x = 128 * enemy.scale.x;
+		    }
 		}
-		enemy.animations.play("charge");
+	    } else if (enemy.walking){
+		enemy.animations.currentAnim.complete();
+		enemy.animations.play("idle");
 	    }
 	}
     },
