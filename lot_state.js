@@ -22,25 +22,91 @@ var lot_state = {
 	this.player.animations.add("idle", [0]);
 	this.player.animations.add("walk", [8, 9, 10, 11], 4, true);
 	game.physics.enable(this.player);
-	//add and setup a basic enemy
+	//create enemies
 	this.r_enemies = [];
+	this.m_enemies = [];
+	//create ranged enemy
 	var enemy = game.add.sprite(600, 400, "lot_r_enemy");
+	enemy.anchor.x = 0.5;
 	enemy.animations.add("idle", [0]);
-	enemy.animations.add("charge", [1], 1, false).onComplete.add(
+	var charge_anim = enemy.animations.add("charge", [1], 1, false);
+	charge_anim.onStart.add(
 	    function(enemy){
-		enemy.animations.play("throw");
 		enemy.charging = true;
 	    },
 	    enemy);
-	enemy.animations.add("throw", [2], 1, false).onComplete.add(
+	charge_anim.onComplete.add(
 	    function(enemy){
-		enemy.animations.play("idle");
+		enemy.animations.play("throw");
 		enemy.charging = false;
 	    },
 	    enemy);
-	enemy.detect_range = 64 * 3;
+	var throw_anim = enemy.animations.add("throw", [2], 1, false)
+	throw_anim.onStart.add(
+	    function(enemy){
+		enemy.attacking = true;
+		//generate projectile
+	    },
+	    enemy);
+	throw_anim.onComplete.add(
+	    function(enemy){
+		enemy.animations.play("idle");
+		enemy.attacking = false;
+	    },
+	    enemy);
+	enemy.detect_range = 64 * 4;
 	enemy.charging = false;
+	enemy.attacking = false;
 	this.r_enemies.push(enemy);
+	//create melee enemy
+	enemy = game.add.sprite(600, 100, "lot_m_enemy");
+	enemy.anchor.x = 0.5;
+	enemy.animations.add("idle", [0]);
+	enemy.animations.add("walk", [8, 9, 10, 11], 8, true);
+	charge_anim = 
+	    enemy.animations.add(
+		"charge", 
+		[16, 17, 18, 18], 
+		4, 
+		false);
+	charge_anim.onStart.add(
+	    function(enemy){
+		enemy.charging = true;
+	    },
+	    enemy);
+	charge_anim.onComplete.add(
+	    function(enemy){
+		enemy.animations.play("punch");
+		enemy.charging = false;
+	    },
+	    enemy);
+	var punch_anim = 
+	    enemy.animations.add(
+		"punch", 
+		[24, 25, 26, 27], 
+		6, 
+		false);
+	punch_anim.onStart.add(
+	    function(enemy){
+		enemy.attacking = true;
+		//adjust later
+		enemy.body.velocity.x = 16 * enemy.scale.x;
+		//add some down time to the enemy?
+	    },
+	    enemy);
+	punch_anim.onComplete.add(
+	    function(enemy){
+		enemy.attacking = false;
+		enemy.body.velocity.x = 0;
+		enemy.animations.play("idle");
+		//add some down time to the enemy?
+	    },
+	    enemy);
+	enemy.detect_range = 64 * 2;
+	enemy.charging = false;
+	enemy.attacking = false;
+	game.physics.enable(enemy);
+	this.m_enemies.push(enemy);
 	this.cursor = game.input.keyboard.createCursorKeys();
     },
 
@@ -97,7 +163,22 @@ var lot_state = {
 	var remove_indexes = [];
 	for (var i = 0; i < this.r_enemies.length; i++){
 	    var enemy = this.r_enemies[i];
-	    if (DistanceBetween(this.player, enemy) <= enemy.detect_range && !enemy.charging){
+	    if (DistanceBetween(this.player, enemy) <= enemy.detect_range && 
+		!(enemy.charging || enemy.attacking)){
+		enemy.animations.play("charge");
+	    }
+	}
+	//remove stuff from indexes
+	remove_indexes = [];
+	for (var i = 0; i < this.m_enemies.length; i++){
+	    var enemy = this.m_enemies[i];
+	    if (DistanceBetween(this.player, enemy) <= enemy.detect_range && 
+		!(enemy.charging || enemy.attacking)){
+		if (this.player.x < enemy.x){
+		    enemy.scale.x = -1;
+		} else {
+		    enemy.scale.x = 1;
+		}
 		enemy.animations.play("charge");
 	    }
 	}

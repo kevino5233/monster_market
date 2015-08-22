@@ -38,10 +38,19 @@ function UpdateCamera(camera, player) {
     }
 }
 
-//gets the distance between two sprites or images
+//gets the distance between two sprites or images. 
+//Uses the center of objects for a better in-game feel
 function DistanceBetween(obj_a, obj_b){
-    var diff_x = obj_a.x - obj_b.x;
-    var diff_y = obj_a.y - obj_b.y;
+    var a = {
+	x: obj_a.x + obj_a.width / 2, 
+	y: obj_a.y + obj_a.height / 2
+    };
+    var b = {
+	x: obj_b.x + obj_b.width / 2, 
+	y: obj_b.y + obj_b.height / 2
+    };
+    var diff_x = a.x - b.x;
+    var diff_y = a.y - b.y;
     var dist_squared = diff_x * diff_x + diff_y * diff_y;
     return Math.sqrt(dist_squared);
 }
