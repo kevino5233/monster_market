@@ -5,17 +5,34 @@ Player = function(game, x, y, state)
     this.game = game;
 
     this.base_velocity = 200;
+    this.invincible_frames = 60;
+    this.invincible_frames_for = 0;
+
     this.right = true;
     this.anchor.x = 0.5;
+    this.health = 4;
 
     this.animations.add("idle", [0]);
     this.animations.add("walk", [8, 9, 10, 11], 4, true);
 
     this.game.physics.enable(this);
-};
+}
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
+
+Player.prototype.TakeDamage = function(damage){
+    console.log("Deng");
+    if (!this.Invincible()){
+	console.log("Peng");
+	this.damage(damage);
+	this.invincible_frames_for = this.invincible_frames;
+    }
+}
+
+Player.prototype.Invincible = function(){
+    return this.invincible_frames_for > 0;
+}
 
 Player.prototype.update = function()
 {
@@ -58,5 +75,9 @@ Player.prototype.update = function()
 	}
 	this.animations.play(anim_state);
 
+	if (this.Invincible()){
+	    this.invincible_frames_for -= 1;
+	}
+
 	UpdateCamera(game.camera, this);
-};
+}

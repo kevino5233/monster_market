@@ -4,6 +4,7 @@ var load_state = {
 	game.load.image("car_1", "assets/car_1.png");
 	game.load.image("car_2", "assets/car_2.png");
 	game.load.image("car_3", "assets/car_3.png");
+	game.load.spritesheet("heart", "assets/heart.png", 32, 32);
 	game.load.spritesheet("player", "assets/player.png", 64, 64);
 	game.load.spritesheet("lot_m_enemy", "assets/lot_m_enemy.png", 64, 128);
 	game.load.spritesheet("lot_r_enemy", "assets/lot_r_enemy.png", 64, 128);
