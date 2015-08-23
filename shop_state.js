@@ -24,6 +24,10 @@ var shop_state = {
 		//this.UI_layer.add(this.shoppingListUi);
 		game.add.existing(this.shoppingListUi);
 
+		this.shoppingAssistant = new ShoppingAssistant(this, game, 500, 300);
+		this.shoppingAssistant.onDialogueComplete.add(this.onDialogueComplete, this);
+		game.add.existing(this.shoppingAssistant);
+
 		this.cursor = game.input.keyboard.createCursorKeys();
 
 		this.timer = new Phaser.Time(game);
@@ -39,6 +43,20 @@ var shop_state = {
 	preRender: function()
 	{
 
+	},
+
+	onDialogueComplete: function(assistant)
+	{
+		assistant.endDialogue();
+
+		this.shoppingList.revealRandom();
+		var entry;
+		for(var i = 0; i < this.shoppingList.list.length; i++)
+		{
+			entry = this.shoppingList.list[i];
+			if(!entry.revealed) return;
+		}
+		assistant.enabled = false;
 	},
 
 	generateShelves: function()

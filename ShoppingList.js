@@ -51,13 +51,30 @@ ShoppingList.prototype.generate = function(numItems, numShelves)
 
 ShoppingList.prototype.addEntry = function(shoppingListEntry)
 {
-	shoppingListEntry.revealed = true;
 	this.list.push(shoppingListEntry);
 }
 
 ShoppingList.prototype.add = function(item, shelf)
 {
 	this.addEntry(new ShoppingListEntry(item, shelf));
+}
+
+ShoppingList.prototype.revealRandom = function()
+{
+	var nonrevealed = [];
+
+	var entry;
+	for(var i = 0; i < this.list.length; i++)
+	{
+		entry = this.list[i];
+		if(!entry.revealed && !entry.found)
+			nonrevealed.push(entry);
+	}
+
+	if(nonrevealed.length > 0)
+	{
+		nonrevealed[game.rnd.integerInRange(0, nonrevealed.length - 1)].reveal();
+	}
 }
 
 ShoppingList.prototype.getItem = function(item)

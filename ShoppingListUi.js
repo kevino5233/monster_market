@@ -5,24 +5,16 @@ ShoppingListUi = function(state, game, sourceList, x, y)
 	this.data = sourceList;
 	this.list = this.data.list;
 
-	this.isAdded = false;
-
 	Phaser.Text.call(this, game, x, y, "ASD");
+	this.font = 'Press Start 2P';
+	this.fontSize = 32;
 }
 
 ShoppingListUi.prototype = Object.create(Phaser.Text.prototype);
 ShoppingListUi.prototype.constructor = ShoppingListUi;
 
-ShoppingListUi.prototype.create = function()
-{
-	this.isAdded = true;
-	this.font = 'Press Start 2P';
-	this.fontSize = 32;
-}
-
 ShoppingListUi.prototype.update = function()
 {
-	if(!this.isAdded) this.create();
 	this.invalidate();
 }
 
