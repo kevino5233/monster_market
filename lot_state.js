@@ -25,13 +25,8 @@ var lot_state = {
 	//load sprites
 	game.add.sprite(0, 0, "lot_bg");
 	//add  and set up player
-	this.player = game.add.sprite(400, 300, "player");
-	this.player.base_velocity = 200;
-	this.player.right = true;
-	this.player.anchor.x = 0.5;
-	this.player.animations.add("idle", [0]);
-	this.player.animations.add("walk", [8, 9, 10, 11], 4, true);
-	game.physics.enable(this.player);
+	this.player = new Player(this, game, 400, 300);
+	game.add.existing(this.player);
 	//create enemies
 	this.r_enemies = [];
 	this.m_enemies = [];
@@ -45,8 +40,6 @@ var lot_state = {
     },
 
     update: function(){
-	//this.player.body.setZeroVelocity();
-
 	var base_vel = this.player.base_velocity;
 
 	if (this.cursor.up.isDown){
