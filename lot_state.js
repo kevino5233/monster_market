@@ -30,7 +30,7 @@ var lot_state = {
 	var enemy = game.add.sprite(600, 400, "lot_r_enemy");
 	enemy.anchor.x = 0.5;
 	enemy.animations.add("idle", [0]);
-	var charge_anim = enemy.animations.add("charge", [1], 1, false);
+	var charge_anim = enemy.animations.add("charge", [8, 9, 10, 10], 8, false);
 	charge_anim.onStart.add(
 	    function(enemy){
 		enemy.charging = true;
@@ -42,17 +42,34 @@ var lot_state = {
 		enemy.charging = false;
 	    },
 	    enemy);
-	var throw_anim = enemy.animations.add("throw", [2], 1, false)
+	var throw_anim = enemy.animations.add("throw", [16, 17, 18, 19], 8, false)
 	throw_anim.onStart.add(
 	    function(enemy){
+		var diff_x = enemy.aim.x - enemy.x;
+		var diff_y = enemy.aim.y - enemy.y;
+		var diff_base = Math.abs(diff_x) + Math.abs(diff_y);
+		var x_diff_ratio = diff_x / diff_base;
+		var y_diff_ratio = diff_y / diff_base;
+		var bottle_v = {
+		    x: 256 * x_diff_ratio,
+		    y: 256 * y_diff_ratio
+		}
+		var bottle = game.add.sprite(
+		    enemy.x,
+		    enemy.y + enemy.height / 2,
+		    "bottle");
+		bottle.animations.add("projectile", [0, 1, 2, 3], 8, true);
+		bottle.scale.x = enemy.scale.x;
+		game.physics.enable(bottle);
+		bottle.body.velocity = bottle_v;
 		enemy.attacking = true;
 		//generate projectile
 	    },
 	    enemy);
 	throw_anim.onComplete.add(
 	    function(enemy){
-		enemy.animations.play("idle");
 		enemy.attacking = false;
+		enemy.animations.play("idle");
 	    },
 	    enemy);
 	enemy.detect_range = 64 * 4;
@@ -190,6 +207,15 @@ var lot_state = {
 	    var enemy = this.r_enemies[i];
 	    if (DistanceBetween(this.player, enemy) <= enemy.detect_range && 
 		!(enemy.charging || enemy.attacking)){
+		if (this.player.x < enemy.x){
+		    enemy.scale.x = -1;
+		} else {
+		    enemy.scale.x = 1;
+		}
+		enemy.aim = {
+		    x: this.player.x,
+		    y: this.player.y
+		};
 		enemy.animations.currentAnim.complete();
 		enemy.animations.play("charge");
 	    }
@@ -229,6 +255,7 @@ var lot_state = {
 		enemy.animations.play("idle");
 	    }
 	}
+	remove_indexes = [];
     },
 
     resize: function(){
