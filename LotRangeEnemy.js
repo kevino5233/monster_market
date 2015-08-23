@@ -57,8 +57,8 @@ LotRangeEnemy.prototype.ThrowBottle = function(){
 };
 
 LotRangeEnemy.prototype.update = function(){
-    if (DistanceBetween(this.state.player, this) <= enemy.detect_range && 
-	!(this.charging || enemy.attacking)){
+    if (DistanceBetween(this.state.player, this) <= this.detect_range && 
+	!(this.charging || this.attacking)){
 	if (this.state.player.x < this.x){
 	    this.scale.x = -1;
 	} else {
