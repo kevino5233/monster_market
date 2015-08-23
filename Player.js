@@ -57,4 +57,6 @@ Player.prototype.update = function()
 	    this.scale.x = -1;
 	}
 	this.animations.play(anim_state);
+
+	UpdateCamera(game.camera, this);
 };

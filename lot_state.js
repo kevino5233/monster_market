@@ -112,8 +112,6 @@ var lot_state = {
     update: function(){
 	//this.player.body.setZeroVelocity();
 	this.UpdateEnemies();
-
-	UpdateCamera(game.camera, this.player);
     },
 
     UpdateEnemies : function(){
