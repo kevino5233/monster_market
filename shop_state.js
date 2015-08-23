@@ -17,6 +17,13 @@ var shop_state = {
 		game.add.existing(new LotRangeEnemy(game, 600, 400, this));
 		game.add.existing(new LotMeleeEnemy(game, 600, 200, this));
 
+		this.shoppingList = new ShoppingList(this, game);
+		this.shoppingList.generate(5, 20);
+
+		this.shoppingListUi = new ShoppingListUi(this, game, this.shoppingList, 0, 0);
+		//this.UI_layer.add(this.shoppingListUi);
+		game.add.existing(this.shoppingListUi);
+
 		this.cursor = game.input.keyboard.createCursorKeys();
 
 		this.timer = new Phaser.Time(game);
@@ -24,6 +31,12 @@ var shop_state = {
 	},
 
 	update: function()
+	{
+		this.UI_layer.x = game.camera.x;
+		this.UI_layer.y = game.camera.y;
+	},
+
+	preRender: function()
 	{
 
 	},
@@ -64,5 +77,6 @@ var shop_state = {
 	onShelfSearchComplete: function(shelf)
 	{
 		shelf.interactable = false;
+		this.shoppingList.findShelf(shelf.id);
 	}
 }

@@ -15,11 +15,15 @@ Shelf = function(state, game, id, x, y)
 
 	this.onSearchComplete = new Phaser.Signal();
 	this.onSearchProgress = new Phaser.Signal();
-	this.searchTime = 1.5;
+	this.searchTime = 3.0;
 	this.searchTimer = 0.0;
 
 	this.searchDecayTime = 0.3;
 	this.searchComplete = false;
+
+	this.addedBlinkEvent = false;
+	this.blinkAlpha = 0.9;
+	this.blinkRate = 0.1;
 
 	this.shakeTime = 0.05;
 	this.shakeTimer = 0.0;
@@ -75,7 +79,25 @@ Shelf.prototype.checkInteraction = function()
 		if(this.game.input.keyboard.isDown(k_interact))
 		{
 			this.onInteract.dispatch(this);
+			this.addedBlinkEvent = false;
+		} else if(!this.addedBlinkEvent)
+		{
+			game.time.events.add(Phaser.Timer.SECOND * this.blinkRate, this.blinkEvent, this);
+			this.addedBlinkEvent = true;
 		}
+	} else {
+		this.addedBlinkEvent = false;
+	}
+}
+
+Shelf.prototype.blinkEvent = function()
+{
+	this.alpha = this.alpha == 1.0 ? this.blinkAlpha : 1.0;
+
+	if(this.addedBlinkEvent)
+		game.time.events.add(Phaser.Timer.SECOND * this.blinkRate, this.blinkEvent, this);
+	else {
+		this.alpha = 1.0;
 	}
 }
 
@@ -104,6 +126,8 @@ Shelf.prototype.search = function(time)
 
 		this.searchComplete = true;
 		this.onSearchComplete.dispatch(this);
+
+		this.addedBlinkEvent = false;
 	}
 
 	this.updateSearchBar();

@@ -2,7 +2,7 @@ var load_state = {
     preload: function(){
 	game.load.image("lot_bg", "assets/parking_lot.png");
     game.load.image("shelf", "assets/shelf.png");
-    game.load.image("shop_bg", "assets/shop.png")
+    game.load.image("shop_bg", "assets/shop.png");
 	game.load.image("car_1", "assets/car_1.png");
 	game.load.image("car_2", "assets/car_2.png");
 	game.load.image("car_3", "assets/car_3.png");
