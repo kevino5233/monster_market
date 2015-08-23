@@ -10,6 +10,12 @@ var deadzone_trig_w = (game_w - deadzone_w) / 2;
 var deadzone_trig_h = (game_h - deadzone_h) / 2;
 
 //==============================================================================
+//Key bindings
+//==============================================================================
+
+var k_interact = Phaser.Keyboard.E;
+
+//==============================================================================
 //utility functions
 //==============================================================================
 
@@ -55,6 +61,20 @@ function DistanceBetween(obj_a, obj_b){
     return Math.sqrt(dist_squared);
 }
 
+var StateUtil = {
+    InitializeLayers: function(state)
+    {
+        state.background = state.game.add.group(),
+        state.player_layer = state.game.add.group(),
+        state.m_enemy_layer = state.game.add.group(),
+        state.r_enemy_layer = state.game.add.group(),
+        state.envir_layer = state.game.add.group(),
+        state.bottle_layer = state.game.add.group(),
+        state.UI_layer = state.game.add.group()
+    }
+}
+
+
 //==============================================================================
 //game start
 //==============================================================================
@@ -65,5 +85,6 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO);
 game.state.add("boot", boot_state);
 game.state.add("load", load_state);
 game.state.add("lot", lot_state);
+game.state.add("shop", shop_state);
 
 game.state.start("boot");

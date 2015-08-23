@@ -9,8 +9,8 @@ Player = function(game, x, y, state)
     this.invincible_frames_for = 0;
 
     this.right = true;
-    this.anchor.x = 0.5;
     this.health = 4;
+    this.anchor.x = this.anchor.y = 0.5;
 
     this.animations.add("idle", [0]);
     this.animations.add("walk", [8, 9, 10, 11], 4, true);
