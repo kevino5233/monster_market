@@ -24,19 +24,6 @@ var lot_state = {
 	//add  and set up player
 	this.player_layer.add(new Player(game, 400, 300, this));
 	this.player = this.player_layer.children[0];
-	this.hearts = [];
-	for (var i = 0; i < this.player.health; i++){
-	    var UI_x = 16 + 48 * i;
-	    var UI_y = 16;
-	    var heart = game.add.sprite(UI_x, UI_y, "heart", 0);
-	    heart.animations.add("full", [0]);
-	    heart.animations.add("half", [1]);
-	    heart.animations.play("full");
-	    heart.UI_x = UI_x;
-	    heart.UI_y = UI_y;
-	    this.hearts.push(heart);
-	    this.UI_layer.add(heart);
-	}
 	//create ranged enemy
 	this.r_enemy_layer.add(new LotRangeEnemy(game, 600, 400, this));
 	//create melee enemy
@@ -54,19 +41,11 @@ var lot_state = {
 	game.physics.arcade.overlap(
 	    this.player, 
 	    this.m_enemy_layer, 
+	    this.take_melee_damage,
 	    function(player, enemy){
 		return !player.Invincible() && enemy.attacking;
 	    },
-	    this.check_enemy_attacking,
 	    this);
-	if (this.player.health < this.hearts.length){
-	    if (Math.ceil(this.player.health) == this.hearts.length){
-		this.hearts[this.hearts.length - 1].animations.play("half");
-	    } else {
-		var heart = this.hearts.pop();
-		this.UI_layer.remove(heart, true);
-	    }
-	}
 	this.UI_layer.x = game.camera.x;
 	this.UI_layer.y = game.camera.y;
     },

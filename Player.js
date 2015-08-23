@@ -16,15 +16,25 @@ Player = function(game, x, y, state)
     this.animations.add("walk", [8, 9, 10, 11], 4, true);
 
     this.game.physics.enable(this);
+
+    this.hearts = [];
+    for (var i = 0; i < this.health; i++){
+	var UI_x = 16 + 48 * i;
+	var UI_y = 16;
+	var heart = game.add.sprite(UI_x, UI_y, "heart", 0);
+	heart.animations.add("full", [0]);
+	heart.animations.add("half", [1]);
+	heart.animations.play("full");
+	this.hearts.push(heart);
+	this.state.UI_layer.add(heart);
+    }
 }
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
 Player.prototype.TakeDamage = function(damage){
-    console.log("Deng");
     if (!this.Invincible()){
-	console.log("Peng");
 	this.damage(damage);
 	this.invincible_frames_for = this.invincible_frames;
     }
@@ -77,6 +87,14 @@ Player.prototype.update = function()
 
 	if (this.Invincible()){
 	    this.invincible_frames_for -= 1;
+	}
+	if (this.health < this.hearts.length){
+	    if (Math.ceil(this.health) == this.hearts.length){
+		this.hearts[this.hearts.length - 1].animations.play("half");
+	    } else {
+		var heart = this.hearts.pop();
+		this.state.UI_layer.remove(heart, true);
+	    }
 	}
 
 	UpdateCamera(game.camera, this);
