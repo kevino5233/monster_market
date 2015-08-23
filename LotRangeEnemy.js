@@ -50,10 +50,10 @@ LotRangeEnemy.prototype.ThrowBottle = function(){
 	this.y + this.height / 2,
 	"bottle");
     bottle.animations.add("projectile", [0, 1, 2, 3], 8, true);
-    bottle.dir = bottle.scale.x = this.scale.x;
     bottle.animations.play("projectile");
     game.physics.enable(bottle);
     bottle.body.velocity = bottle_v;
+    this.state.bottle_layer.add(bottle);
 };
 
 LotRangeEnemy.prototype.update = function(){

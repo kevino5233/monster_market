@@ -1,17 +1,17 @@
-Player = function(state, game, x, y)
+Player = function(game, x, y, state)
 {
-	Phaser.Sprite.call(this, game, x, y, "player");
-	this.state = state;
-	this.game = game;
+    Phaser.Sprite.call(this, game, x, y, "player");
+    this.state = state;
+    this.game = game;
 
-	this.base_velocity = 200;
-	this.right = true;
-	this.anchor.x = 0.5;
+    this.base_velocity = 200;
+    this.right = true;
+    this.anchor.x = 0.5;
 
-	this.animations.add("idle", [0]);
-	this.animations.add("walk", [8, 9, 10, 11], 4, true);
+    this.animations.add("idle", [0]);
+    this.animations.add("walk", [8, 9, 10, 11], 4, true);
 
-	this.game.physics.enable(this);
+    this.game.physics.enable(this);
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);

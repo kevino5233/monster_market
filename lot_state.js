@@ -18,70 +18,63 @@ var lot_state = {
     },
 
     create: function(){
+	this.background = game.add.group(),
+	this.player_layer = game.add.group(),
+	this.m_enemy_layer = game.add.group(),
+	this.r_enemy_layer = game.add.group(),
+	this.envir_layer = game.add.group(),
+	this.bottle_layer = game.add.group(),
+	this.UI_layer = game.add.group()
 	//level config
 	game.world.setBounds(0, 0, 2400, 600);
 	//this.bg_music = game.add.audio("lot_music", 1, true).play();
-
 	//load sprites
 	game.add.sprite(0, 0, "lot_bg");
 	//add  and set up player
-	this.player = new Player(this, game, 400, 300);
+	this.player_layer.add(new Player(game, 400, 300, this));
+	this.player = this.player_layer.children[0];
 	game.add.existing(this.player);
-	//create enemies
-	this.r_enemies = [];
-	this.m_enemies = [];
 	//create ranged enemy
-	this.r_enemies.push(new LotRangeEnemy(game, 600, 400, this));
-	game.add.existing(this.r_enemies[0]);
+	this.r_enemy_layer.add(new LotRangeEnemy(game, 600, 400, this));
+	var r_enemies = this.r_enemy_layer.children;
+	for (var i = 0; i < r_enemies.length; i++){
+	    game.add.existing(r_enemies[0]);
+	}
 	//create melee enemy
-	this.m_enemies.push(new LotMeleeEnemy(game, 400, 100, this));
-	game.add.existing(this.m_enemies[0]);
+	this.m_enemy_layer.add(new LotMeleeEnemy(game, 400, 100, this));
+	var m_enemies = this.m_enemy_layer.children;
+	for (var i = 0; i < m_enemies.length; i++){
+	    game.add.existing(m_enemies[0]);
+	}
 	this.cursor = game.input.keyboard.createCursorKeys();
     },
 
     update: function(){
-	var base_vel = this.player.base_velocity;
+	game.physics.arcade.overlap(
+	    this.player, 
+	    this.bottle_layer, 
+	    this.take_bottle_damage,
+	    null,
+	    this);
+	game.physics.arcade.overlap(
+	    this.player, 
+	    this.m_enemy_layer, 
+	    this.take_melee_damage,
+	    this.check_enemy_attacking,
+	    this);
+    },
 
-	if (this.cursor.up.isDown){
-	    this.player.body.velocity.y = -base_vel;
-	} else if (this.cursor.down.isDown){
-	    this.player.body.velocity.y = base_vel;
-	} else {
-	    this.player.body.velocity.y = 0;
-	}
-	if (this.cursor.left.isDown){
-	    this.player.body.velocity.x = -base_vel;
-	} else if (this.cursor.right.isDown){
-	    this.player.body.velocity.x = base_vel;
-	} else {
-	    this.player.body.velocity.x = 0;
-	}
+    take_bottle_damage: function(player, bottle){
+	this.player.damage(.5);
+	this.bottle_layer.remove(bottle, true);
+    },
 
-	var anim_state = "idle";
-	var player_x_vel = this.player.body.velocity.x;
-	var player_y_vel = this.player.body.velocity.y;
-	if (player_x_vel || player_y_vel){
-	    anim_state = "walk";
-	    if ((!player_x_vel && this.player.right) || player_x_vel > 0){
-		this.player.right = true;
-	    } else {
-		this.player.right = false;
-	    }
-	} else {
-	    if (this.player.right){
-		this.player.right = true;
-	    } else {
-		this.player.right = false;
-	    }
-	}
-	if (this.player.right){
-	    this.player.scale.x = 1;
-	} else {
-	    this.player.scale.x = -1;
-	}
-	this.player.animations.play(anim_state);
+    take_melee_damage: function(player, enemy){
+	this.player.damage(1);
+    },
 
-	UpdateCamera(game.camera, this.player);
+    check_enemy_attacking: function(player, enemy){
+	return enemy.attacking;
     },
 
     resize: function(){

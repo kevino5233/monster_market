@@ -19,6 +19,7 @@ LotMeleeEnemy = function(game, x, y, state){
     this.charging = false;
     this.attacking = false;
     game.physics.enable(this);
+    this.animations.play("idle");
 
     return this;
 };
@@ -26,8 +27,9 @@ LotMeleeEnemy = function(game, x, y, state){
 LotMeleeEnemy.prototype = Object.create(Phaser.Sprite.prototype);
 LotMeleeEnemy.prototype.constructor = LotMeleeEnemy;
 
-LotMeleeEnemy.prototype.SetZeroVelocity = function(enemy){
-    enemy.body.velocity = {x: 0, y: 0};
+LotMeleeEnemy.prototype.SetZeroVelocity = function(){
+    console.log(this);
+    this.body.velocity = {x: 0, y: 0};
 };
 
 LotMeleeEnemy.prototype.ToggleWalking = function(enemy){
@@ -37,13 +39,14 @@ LotMeleeEnemy.prototype.ToggleWalking = function(enemy){
 LotMeleeEnemy.prototype.ToggleCharging = function(enemy){
     enemy.charging = !enemy.charging;
     if (enemy.charging){
-	enemy.SetZeroVelocity(enemy);
+	enemy.SetZeroVelocity();
     } else {
 	enemy.animations.play("punch");
     }
 };
 
 LotMeleeEnemy.prototype.ToggleAttacking = function(enemy){
+    console.log("shiieeeet");
     enemy.attacking = !enemy.attacking;
     if (enemy.attacking){
 	enemy.body.velocity.x = 128 * enemy.scale.x;
@@ -57,6 +60,7 @@ LotMeleeEnemy.prototype.update = function(){
     var dist_player = DistanceBetween(this.state.player, this);
     if (dist_player <= this.detect_range && 
 	!(this.charging || this.attacking)){
+	console.log(this.animations.currentAnim);
 	console.log("stuff");
 	if (dist_player <= this.attack_range){
 	    this.animations.currentAnim.complete();
