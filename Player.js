@@ -6,7 +6,7 @@ Player = function(game, x, y, state)
 
     this.base_velocity = 200;
     this.right = true;
-    this.anchor.x = 0.5;
+    this.anchor.x = this.anchor.y = 0.5;
 
     this.animations.add("idle", [0]);
     this.animations.add("walk", [8, 9, 10, 11], 4, true);
