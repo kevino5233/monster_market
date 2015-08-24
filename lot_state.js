@@ -1,29 +1,30 @@
 var lot_state = {
     level_data: {
         m_enemies: [
-        { x: 400, y: 100 },
+        { x: 700, y: 100 },
         { x: 800, y: 50 },
+        { x: 1350, y: 250 },
         { x: 1600, y: 150 },
         { x: 1800, y: 400 },
         { x: 2000, y: 0 },
         { x: 2200, y: 200}],
         r_enemies: [
-        { x: 500, y: 400 },
+        { x: 700, y: 400 },
         { x: 900, y: 500 },
         { x: 950, y: 500 },
         { x: 1300, y: 200 },
-        { x: 1700, y: 500 },
+        { x: 1700, y: 300 },
         { x: 1800, y: 200},
         { x: 2000, y: 200},
-        { x: 2000, y: 480}],
+        { x: 2000, y: 510}],
         environment: [
         { x: 830, y: 400, key: "car_1" },
         { x: 550, y: 270, key: "car_2" },
         { x: 1110, y: 510, key: "car_3" },
-        { x: 1370, y: 130, key: "car_1" },
-        { x: 1550, y: 130, key: "car_1" },
-        { x: 1880, y: 130, key: "car_2" },
-        { x: 1780, y: 510, key: "car_3" }]
+        { x: 1370, y: 160, key: "car_1" },
+        { x: 1550, y: 260, key: "car_1" },
+        { x: 1880, y: 200, key: "car_2" },
+        { x: 1780, y: 500, key: "car_3" }]
     },
     preload: function(){
     },
@@ -36,10 +37,10 @@ var lot_state = {
 
     create: function(){
         this.background = game.add.group(),
+        this.envir_layer = game.add.group(),
         this.player_layer = game.add.group(),
         this.m_enemy_layer = game.add.group(),
         this.r_enemy_layer = game.add.group(),
-        this.envir_layer = game.add.group(),
         this.bottle_layer = game.add.group(),
         this.UI_layer = game.add.group()
         //level config
@@ -108,16 +109,13 @@ var lot_state = {
             this.player,
             this.end_checkpoint,
             this.begin_exit,
-            function(body1, body2){
-                console.log("sup");
-            },
+            null,
             this);
         game.physics.arcade.collide(this.m_enemy_layer, this.envir_layer);
         game.physics.arcade.collide(this.player, this.envir_layer);
         this.UI_layer.x = game.camera.x;
         this.UI_layer.y = game.camera.y;
         if (!(this.end_checkpoint.x || this.end_checkpoint.y)){
-            console.log("lmao");
             if (this.end_checkpoint.alpha >= 1){
                 game.state.start("shop");
             } else {

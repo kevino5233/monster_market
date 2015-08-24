@@ -19,6 +19,7 @@ LotMeleeEnemy = function(game, x, y, state){
     this.charging = false;
     this.attacking = false;
     game.physics.enable(this);
+    this.body.setSize(40, 80, 24, 36);
     this.animations.play("idle");
 
     return this;
