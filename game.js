@@ -99,6 +99,19 @@ function LoadLevel(state, levelData)
         state.game.physics.enable(envir_obj);
         envir_obj.body.immovable = true;
     }
+
+    if(state.level_data.assistants != null)
+    {
+        var assistant;
+        for(var i = 0; i < state.level_data.assistants.length; i++)
+        {
+            assistant = state.level_data.assistants[i];
+
+            state.shoppingAssistant = new ShoppingAssistant(state, game, assistant.x, assistant.y);
+            state.shoppingAssistant.onDialogueComplete.add(state.onDialogueComplete, state);
+            state.envir_layer.add(state.shoppingAssistant);
+        }
+    }
 }
 //==============================================================================
 //game start
