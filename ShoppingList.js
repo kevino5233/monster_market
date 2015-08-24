@@ -63,6 +63,16 @@ ShoppingList.prototype.add = function(item, shelf)
 	this.addEntry(new ShoppingListEntry(item, shelf));
 }
 
+ShoppingList.prototype.hasFoundAllItems = function()
+{
+	for(var i = 0; i < this.list.length; i++)
+	{
+		if(!this.list[i].found) return false;
+	}
+
+	return true;
+}
+
 ShoppingList.prototype.revealRandom = function()
 {
 	var nonrevealed = [];

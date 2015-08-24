@@ -113,7 +113,7 @@ var shop_state = {
 		this.generateShelves();
 
 		this.shoppingList = new ShoppingList(this, game);
-		this.shoppingList.generate(5, 20);
+		this.shoppingList.generate(5, 18);
 
 		this.shoppingListUi = new ShoppingListUi(this, game, this.shoppingList, 0, 0);
 		this.UI_layer.add(this.shoppingListUi);
@@ -127,22 +127,40 @@ var shop_state = {
 	update: function()
 	{
 		game.physics.arcade.overlap(
-	    this.player, 
-	    this.bottle_layer, 
-	    this.take_bottle_damage,
-	    !this.player.Invincible,
+		    this.player, 
+		    this.bottle_layer, 
+		    this.take_bottle_damage,
+		    !this.player.Invincible,
 	    this);
 		game.physics.arcade.overlap(
-	    this.player, 
-	    this.m_enemy_layer, 
-	    this.take_melee_damage,
-	    function(player, enemy){
-		return !player.Invincible() && enemy.attacking;
-	    },
-	    this);
+		    this.player, 
+		    this.m_enemy_layer, 
+		    this.take_melee_damage,
+		    function(player, enemy){
+				return !player.Invincible() && enemy.attacking;
+		    },
+	    	this);
 
 	    game.physics.arcade.collide(this.m_enemy_layer, this.envir_layer);
 	    game.physics.arcade.collide(this.player, this.envir_layer);
+
+	    this.checkWin();
+	},
+
+	checkWin: function()
+	{
+		if(this.player.x >= this.game.world.bounds.x + this.game.world.bounds.width - 200)
+		{
+			if(this.shoppingList.hasFoundAllItems())
+			{
+				this.onWin();
+			}
+		}
+	},
+
+	onWin: function()
+	{
+		// LOAD NEXT STATE HERE
 	},
 
 	preRender: function()
