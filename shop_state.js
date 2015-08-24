@@ -1,32 +1,45 @@
 var shop_state = {
 	create: function() 
 	{
-		StateUtil.InitializeLayers(this);
+		//StateUtil.InitializeLayers(this);
+		this.background = game.add.group(),
+        this.player_layer = game.add.group(),
+        this.m_enemy_layer = game.add.group(),
+        this.r_enemy_layer = game.add.group(),
+        this.shelves = game.add.group(),
+        this.envir_layer = game.add.group(),
+        this.bottle_layer = game.add.group(),
+        this.UI_layer = game.add.group()
+
+		var level_data = {
+			m_enemies: [
+
+			]
+		}
 		
 		game.world.setBounds(0, 0, 4000, 600);
 
-		game.add.sprite(0, 0, "shop_bg");
+		this.background.add(new Phaser.Sprite(game, 0, 0, "shop_bg"));
 
 		this.player = new Player(game, 400, 300, this);
 		game.physics.enable(this.player, Phaser.Physics.ARCADE);
 		game.physics.arcade.enableBody(this.player);
-		game.add.existing(this.player);
+		this.player_layer.add(this.player);
 
 		this.generateShelves();
 
-		game.add.existing(new LotRangeEnemy(game, 600, 400, this));
-		game.add.existing(new LotMeleeEnemy(game, 600, 200, this));
+		this.r_enemy_layer.add(new LotRangeEnemy(game, 600, 400, this));
+		this.m_enemy_layer.add(new LotMeleeEnemy(game, 600, 200, this));
 
 		this.shoppingList = new ShoppingList(this, game);
 		this.shoppingList.generate(5, 20);
 
 		this.shoppingListUi = new ShoppingListUi(this, game, this.shoppingList, 0, 0);
-		//this.UI_layer.add(this.shoppingListUi);
-		game.add.existing(this.shoppingListUi);
+		this.UI_layer.add(this.shoppingListUi);
 
 		this.shoppingAssistant = new ShoppingAssistant(this, game, 500, 300);
 		this.shoppingAssistant.onDialogueComplete.add(this.onDialogueComplete, this);
-		game.add.existing(this.shoppingAssistant);
+		this.envir_layer.add(this.shoppingAssistant);
 
 		this.cursor = game.input.keyboard.createCursorKeys();
 
@@ -34,15 +47,39 @@ var shop_state = {
 		this.timer.advancedTiming = true;
 	},
 
+	take_bottle_damage: function(player, bottle){
+		this.player.TakeDamage(.5);
+		this.bottle_layer.remove(bottle, true);
+    },
+
+    take_melee_damage: function(player, enemy){
+		this.player.TakeDamage(1);
+    },
+
 	update: function()
 	{
-		this.UI_layer.x = game.camera.x;
-		this.UI_layer.y = game.camera.y;
+		game.physics.arcade.overlap(
+	    this.player, 
+	    this.bottle_layer, 
+	    this.take_bottle_damage,
+	    !this.player.Invincible,
+	    this);
+		game.physics.arcade.overlap(
+	    this.player, 
+	    this.m_enemy_layer, 
+	    this.take_melee_damage,
+	    function(player, enemy){
+		return !player.Invincible() && enemy.attacking;
+	    },
+	    this);
+
+	    game.physics.arcade.collide(this.m_enemy_layer, this.shelves);
 	},
 
 	preRender: function()
 	{
-
+		this.UI_layer.x = game.camera.x;
+		this.UI_layer.y = game.camera.y;
 	},
 
 	onDialogueComplete: function(assistant)
@@ -73,7 +110,8 @@ var shop_state = {
 			shelf = new Shelf(this, game, i*2 + 1, padding + halfWidth + i*shelfBase.width + i*spacing, halfHeight)
 			shelf.onInteract.add(this.onShelfInteract, this);
 			shelf.onSearchComplete.add(this.onShelfSearchComplete, this);
-			game.add.existing(shelf);
+
+			this.shelves.add(shelf);
 		}
 
 		for(var i = 0; i < 10; i++)
@@ -82,8 +120,8 @@ var shop_state = {
 			shelf.onInteract.add(this.onShelfInteract, this);
 			shelf.onSearchComplete.add(this.onShelfSearchComplete, this);
 			shelf.scale.y = -1;
-			
-			game.add.existing(shelf);
+	
+			this.shelves.add(shelf);
 		}
 	},
 

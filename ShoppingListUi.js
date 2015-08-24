@@ -6,8 +6,10 @@ ShoppingListUi = function(state, game, sourceList, x, y)
 	this.list = this.data.list;
 
 	Phaser.Text.call(this, game, x, y, "ASD");
+	this.anchor.x = 1;
 	this.font = 'Press Start 2P';
-	this.fontSize = 32;
+	this.align = "right";
+	this.fontSize = 24;
 }
 
 ShoppingListUi.prototype = Object.create(Phaser.Text.prototype);

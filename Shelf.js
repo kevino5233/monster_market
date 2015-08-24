@@ -36,6 +36,7 @@ Shelf = function(state, game, id, x, y)
 	this.game.physics.arcade.enableBody(this);
 
 	this.searchBar = new ProgressBar(state, game, x - this.width/2, y, this.width, this.height/8, 0x00ff00);
+	this.searchBar.visible = false;
 	this.searchBar.alpha = 0.5;
 
 	this.body.immovable = true;
@@ -67,7 +68,20 @@ Shelf.prototype.update = function()
 		if(this.searchTimer < 0) this.searchTimer = 0;
 	}
 	
-	if(this.interactable) this.checkInteraction()
+	if(this.interactable) this.checkInteraction();
+
+	if(this.isWithinInteractionRange(this.state.player) && 
+		this.game.input.keyboard.isDown(k_interact))
+	{
+		this.shakeTimer += game.time.elapsedMS / 1000;
+
+		if(this.shakeTimer > this.shakeTime)
+		{
+			this.shakeTimer -= this.shakeTime;
+			this.x = this.originalX;
+			this.x += this.game.rnd.between(-3, 3);
+		}
+	}
 
 	this.updateSearchBar();
 };
@@ -105,14 +119,6 @@ Shelf.prototype.search = function(time)
 {
 	this.searchTimer += time;
 	this.onSearchProgress.dispatch(time, this.searchTimer);
-
-	this.shakeTimer += time;
-	if(this.shakeTimer > this.shakeTime)
-	{
-		this.shakeTimer -= this.shakeTime;
-		this.x = this.originalX;
-		this.x += this.game.rnd.between(-3, 3);
-	}
 
 	this.searchTimer += this.searchDecayTime*(this.game.time.elapsedMS/1000);
 
