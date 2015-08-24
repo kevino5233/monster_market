@@ -72,6 +72,18 @@ function InitializeLayers(state)
     state.UI_layer = state.game.add.group()
 }
 
+function InitializeEvents(state)
+{
+    state.take_bottle_damage = function(player, bottle){
+        this.player.TakeDamage(.5);
+        this.bottle_layer.remove(bottle, true);
+    };
+
+    state.take_melee_damage = function(player, enemy){
+        this.player.TakeDamage(1);
+    };
+}
+
 function LoadLevel(state, levelData)
 {
     //create ranged enemies

@@ -32,6 +32,7 @@ var shop_state = {
 	create: function() 
 	{
 		InitializeLayers(this);
+		InitializeEvents(this);
 		LoadLevel(this, this.level_data);
 
 		game.world.setBounds(0, 0, 4000, 600);
@@ -56,15 +57,6 @@ var shop_state = {
 		this.timer = new Phaser.Time(game);
 		this.timer.advancedTiming = true;
 	},
-
-	take_bottle_damage: function(player, bottle){
-		this.player.TakeDamage(.5);
-		this.bottle_layer.remove(bottle, true);
-    },
-
-    take_melee_damage: function(player, enemy){
-		this.player.TakeDamage(1);
-    },
 
 	update: function()
 	{
