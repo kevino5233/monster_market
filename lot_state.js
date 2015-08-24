@@ -36,14 +36,10 @@ var lot_state = {
     },
 
     create: function(){
-        this.background = game.add.group(),
-        this.envir_layer = game.add.group(),
-        this.player_layer = game.add.group(),
-        this.m_enemy_layer = game.add.group(),
-        this.r_enemy_layer = game.add.group(),
-        this.bottle_layer = game.add.group(),
-        this.UI_layer = game.add.group()
         //level config
+        InitializeLayers(this);
+        InitializeEvents(this);
+        LoadLevel(this, this.level_data);
         game.world.setBounds(0, 0, 2400, 600);
         this.background.create(0, 0, "lot_bg");
         //this.bg_music = game.add.audio("lot_music", 1, true).play();
@@ -58,31 +54,6 @@ var lot_state = {
                 player.tween_active = false;
             },
             this.player);
-        //create ranged enemies
-        var r_enemy_data = this.level_data.r_enemies;
-        for (var i = 0; i < r_enemy_data.length; i++){
-            var r_enemy_dat = r_enemy_data[i];
-            this.r_enemy_layer.add(
-                new LotRangeEnemy(game, r_enemy_dat.x, r_enemy_dat.y, this));
-        }
-        //create melee enemies
-        var m_enemy_data = this.level_data.m_enemies;
-        for (var i = 0; i < m_enemy_data.length; i++){
-            var m_enemy_dat = m_enemy_data[i];
-            var m_enemy_obj = this.m_enemy_layer.add(
-                new LotMeleeEnemy(game, m_enemy_dat.x, m_enemy_dat.y, this));
-        }
-        //create environment
-        var envir_data = this.level_data.environment;
-        for (var i = 0; i < envir_data.length; i++){
-            var envir_dat = envir_data[i];
-            var envir_obj = this.envir_layer.create(
-                envir_dat.x, 
-                envir_dat.y, 
-                envir_dat.key);
-            game.physics.enable(envir_obj);
-            envir_obj.body.immovable = true;
-        }
         this.end_checkpoint = game.add.sprite(2150, 300, "black");
         this.end_checkpoint.scale = {x: 100, y: 100};
         this.end_checkpoint.alpha = 0;

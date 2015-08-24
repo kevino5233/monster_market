@@ -7,6 +7,7 @@ var load_state = {
         game.load.image("large_v_shelf", "assets/large_v_shelf.png");
         game.load.image("shop_bg", "assets/shop.png");
         game.load.image("cashier", "assets/cashier.png");
+        game.load.image("cashier_counter", "assets/cashier_counter.png");
         game.load.image("cashier_bg", "assets/cashier_floor.png");
         game.load.image("assistant", "assets/assistant.png");
     	game.load.image("car_1", "assets/car_1.png");
@@ -30,7 +31,7 @@ var load_state = {
 
     create: function(){
         //game.state.start("lot");
-        game.state.start("shop");
+        game.state.start("cashier");
     },
 
     update: function(){

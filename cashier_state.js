@@ -1,4 +1,32 @@
 var cashier_state = {
+    dialogueList: [[
+        "Did you find everything, okay?",
+        "No?",
+        "Good. We hate your kind",
+        "That'll be $27 please",
+        "Two twenties is all you have?",
+        "TOO BAD",
+        "We only accept exact change."]],
+    first_bad_change_dialogue: [[
+        "What did I say?",
+        "I want exact change damnit!",
+        "Try again, bud.",
+        "Just kidding.",
+        "You're not my bud."]],
+    first_correct_change: [[
+        "Oh, looks like you got it right...",
+        "Must've been a fluke!",
+        "Try again and maybe I'll be convinced",
+        "You monster."]],
+    second_bad_change_dialogue: [[
+        "So it was a fluke?",
+        "Ha, stupid monster!"]],
+    second_correct_change: [[
+        "Oh man, you actually can count change.",
+        "Well I guess you're not that dumb",
+        "for a monster.",
+        "But I still don't like you",
+        "So get the hell out of my store."]],
     level_data: {
         m_enemies: [],
         r_enemies: [],
@@ -7,8 +35,10 @@ var cashier_state = {
         { x: 150, y: 600, key: "shelf", scale: {x: 1, y: -1}},
         { x: 200, y: 240, key: "large_shelf" },
         { x: 700, y: 100, key: "large_v_shelf" },
-        { x: 1000, y: 320, key: "cashier" }
-        ]
+        { x: 1000, y: 320, key: "cashier_counter" }
+        ],
+        assistants: [
+        { x: 1000, y: 320 }]
     },
 
     preload: function(){
@@ -19,62 +49,75 @@ var cashier_state = {
 
     loadRender: function(){
     },
-
     create: function(){
-        this.background = game.add.group(),
-        this.envir_layer = game.add.group(),
-        this.player_layer = game.add.group(),
-        this.m_enemy_layer = game.add.group(),
-        this.r_enemy_layer = game.add.group(),
-        this.bottle_layer = game.add.group(),
-        this.UI_layer = game.add.group()
         //level config
+        InitializeLayers(this);
+        InitializeEvents(this);
+        LoadLevel(this, this.level_data);
         game.world.setBounds(0, 0, 1400, 600);
         this.background.create(0, 0, "cashier_bg");
-        this.player_layer.add(new Player(game, 400, 300, this));
+        this.player_layer.add(new Player(game, 400, 200, this));
         this.player = this.player_layer.children[0];
-        //create ranged enemies
-        var r_enemy_data = this.level_data.r_enemies;
-        for (var i = 0; i < r_enemy_data.length; i++){
-            var r_enemy_dat = r_enemy_data[i];
-            var r_enemy_obj = this.r_enemy_layer.add(
-                new LotRangeEnemy(game, r_enemy_dat.x, r_enemy_dat.y, this));
-            if (r_enemy_dat.scale){
-                r_enemy_obj.scale = r_enemy_dat.scale;
-            }
-        }
-        //create melee enemies
-        var m_enemy_data = this.level_data.m_enemies;
-        for (var i = 0; i < m_enemy_data.length; i++){
-            var m_enemy_dat = m_enemy_data[i];
-            var m_enemy_obj = this.m_enemy_layer.add(
-                new LotMeleeEnemy(game, m_enemy_dat.x, m_enemy_dat.y, this));
-            if (m_enemy_dat.scale){
-                m_enemy_obj.scale = m_enemy_dat.scale;
-            }
-        }
-        //create environment
-        var envir_data = this.level_data.environment;
-        for (var i = 0; i < envir_data.length; i++){
-            var envir_dat = envir_data[i];
-            var envir_obj = this.envir_layer.create(
-                envir_dat.x, 
-                envir_dat.y, 
-                envir_dat.key);
-            game.physics.enable(envir_obj);
-            envir_obj.body.immovable = true;
-            if (envir_dat.scale){
-                envir_obj.scale = envir_dat.scale;
-            }
-        }
         this.cursor = game.input.keyboard.createCursorKeys();
+        this.cost = 28;
+        this.money_paid = 0;
+        this.num_times_correct_pay = 0;
     },
-
     update: function(){
+        game.physics.arcade.overlap(
+            this.player, 
+            this.bottle_layer, 
+            this.take_bottle_damage,
+            !this.player.Invincible,
+            this);
+        game.physics.arcade.overlap(
+            this.player, 
+            this.m_enemy_layer, 
+            this.take_melee_damage,
+            function(player, enemy){
+                return !player.Invincible() && enemy.attacking;
+            },
+            this);
+        game.physics.arcade.overlap(
+            this.player,
+            this.end_checkpoint,
+            this.pickup_money,
+            game.input.keyboard.isDown(k_interact),
+            this);
+        game.physics.arcade.collide(this.m_enemy_layer, this.envir_layer);
+        game.physics.arcade.collide(this.player, this.envir_layer);
         this.UI_layer.x = game.camera.x;
         this.UI_layer.y = game.camera.y;
     },
-
+    onDialogueComplete: function(assistant)
+    {
+        if (this.num_times_correct_pay == 0){
+            assistant.loadDialogue(this.first_bad_change_dialogue);
+        } else if (this.num_times_correct_pay == 1){
+            assistant.loadDialogue(this.second_bad_change_dialogue);
+        } else if (this.num_times_correct_pay == 2){
+            //shit happens
+        } else {
+            assistant.enabled = false;
+        }
+    },
+    pickup_money: function(player, money){
+        this.money += money.value;
+        if (this.money == this.cost){
+            if (this.num_times_correct_pay == 0){
+                assistant.loadDialogue(this.first_correct_dialogue);
+            } else if (this.num_times_correct_pay == 1){
+                assistant.loadDialogue(this.second_correct_dialogue);
+            }        
+        } else {
+            if (this.num_times_correct_pay == 0){
+                assistant.loadDialogue(this.first_bad_change_dialogue);
+            } else if (this.num_times_correct_pay == 1){
+                assistant.loadDialogue(this.second_bad_change_dialogue);
+            }
+        }
+        money.destroy();
+    },
     resize: function(){
     },
 

@@ -42,7 +42,8 @@ Player.prototype.TakeDamage = function(damage){
 }
 
 Player.prototype.Invincible = function(){
-    return this.tween_active || this.invincible_frames_for > 0;
+    return true;
+    //return this.tween_active || this.invincible_frames_for > 0;
 }
 
 Player.prototype.update = function()

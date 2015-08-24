@@ -1,37 +1,40 @@
 ShoppingAssistant = function(state, game, x, y, dialogueList)
 {
-	this.state = state;
-	this.game = game;
+    this.state = state;
+    this.game = game;
 
-	this.interactionRange = 100;
-	this.talking = false;
+    this.interactionRange = 100;
+    this.talking = false;
 
-	this.onDialogueComplete = new Phaser.Signal();
-	this.dialogueTime = 0.35;
-	this.dialogueTimer = 0;
-	this.dialogueLength = 10;
-	this.currentDialogueIndex = 0;
-	this.canAdvanceDialogue = false;
-	this.currentDialogueListIndex = 0;
+    this.dialogueList = dialogueList;
+    this.onDialogueComplete = new Phaser.Signal();
+    this.dialogueTime = 0.35;
+    this.dialogueTimer = 0;
+    this.dialogueLength = dialogueList[0].length;
+    this.currentDialogueIndex = 0;
+    this.canAdvanceDialogue = false;
+    this.currentDialogueListIndex = 0;
 
-	Phaser.Group.call(this, game);
-	this.x = x;
-	this.y = y;
+    Phaser.Group.call(this, game);
+    this.x = x;
+    this.y = y;
 
-	this.sprite = new Phaser.Sprite(game, 0, 0, "assistant");
-	this.sprite.anchor.x = this.sprite.anchor.y = 0.5;
-	this.add(this.sprite);
+    this.sprite = new Phaser.Sprite(game, 0, 0, "assistant");
+    this.sprite.anchor.x = this.sprite.anchor.y = 0.5;
+    this.add(this.sprite);
 
-	this.dialogueUi = new Dialogue(
-            this.state, 
-            this.game, 
-            0, 
-            -this.sprite.height/2, 
-            dialogueList);
-	this.dialogueUi.visible = false;
-	this.add(this.dialogueUi);
+    this.dialogueUi = new Dialogue(
+        this.state, 
+        this.game, 
+        0, 
+        -this.sprite.height/2, 
+        dialogueList);
+    this.dialogueUi.visible = false;
+    this.add(this.dialogueUi);
 
-	this.enabled = true;
+    this.enabled = true;
+
+    state.assistant_layer.add(this);
 }
 
 ShoppingAssistant.prototype = Object.create(Phaser.Group.prototype);
@@ -75,7 +78,6 @@ ShoppingAssistant.prototype.checkInteraction = function()
 				this.beginDialogue();
 			}
 		} else {
-			this.dialogueUi.showUninteractableDialogue();
 			this.dialogueTimer = 0;
 		}
 	}
@@ -127,4 +129,28 @@ ShoppingAssistant.prototype.endDialogue = function()
 	{
 		this.currentDialogueListIndex = 0;
 	}
+}
+ShoppingAssistant.prototype.reset = function(){
+    var dialogueList = this.dialogueList;
+    this.dialogueUi.destroy();
+    this.dialogueUi = new Dialogue(
+        this.state, 
+        this.game, 
+        0, 
+        -this.sprite.height/2, 
+        dialogueList);
+    this.dialogueLength = dialogueList[0].length;
+    this.currentDialogueIndex = 0;
+    this.canAdvanceDialogue = false;
+    this.currentDialogueListIndex = 0;
+
+    this.dialogueUi.visible = false;
+    this.add(this.dialogueUi);
+
+    this.enabled = true;
+    this.talking = false;
+}
+ShoppingAssistant.prototype.loadDialogue = function(dialogueList){
+    this.dialogueList = dialogueList;
+    this.reset();
 }

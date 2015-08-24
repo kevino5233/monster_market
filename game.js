@@ -64,11 +64,13 @@ function DistanceBetween(obj_a, obj_b){
 function InitializeLayers(state)
 {
     state.background = state.game.add.group(),
+    state.envir_layer = state.game.add.group(),
     state.player_layer = state.game.add.group(),
     state.m_enemy_layer = state.game.add.group(),
     state.r_enemy_layer = state.game.add.group(),
-    state.envir_layer = state.game.add.group(),
+    state.assistant_layer = state.game.add.group(),
     state.bottle_layer = state.game.add.group(),
+    state.money_layer = state.game.add.group(),
     state.UI_layer = state.game.add.group()
 }
 
@@ -90,8 +92,11 @@ function LoadLevel(state, levelData)
     var r_enemy_data = state.level_data.r_enemies;
     for (var i = 0; i < r_enemy_data.length; i++){
         var r_enemy_dat = r_enemy_data[i];
-        state.r_enemy_layer.add(
+        var r_enemy_obj = state.r_enemy_layer.add(
             new LotRangeEnemy(state.game, r_enemy_dat.x, r_enemy_dat.y, state));
+        if (r_enemy_dat.scale){
+            r_enemy_obj.scale = r_enemy_dat.scale;
+        }
     }
     //create melee enemies
     var m_enemy_data = state.level_data.m_enemies;
@@ -99,6 +104,9 @@ function LoadLevel(state, levelData)
         var m_enemy_dat = m_enemy_data[i];
         var m_enemy_obj = state.m_enemy_layer.add(
             new LotMeleeEnemy(state.game, m_enemy_dat.x, m_enemy_dat.y, state));
+        if (m_enemy_dat.scale){
+            m_enemy_obj.scale = m_enemy_dat.scale;
+        }
     }
     //create environment
     var envir_data = state.level_data.environment;
@@ -110,18 +118,27 @@ function LoadLevel(state, levelData)
             envir_dat.key);
         state.game.physics.enable(envir_obj);
         envir_obj.body.immovable = true;
+        if (envir_dat.scale){
+            envir_obj.scale = envir_dat.scale;
+        }
     }
 
     if(state.level_data.assistants != null)
     {
-        var assistant;
         for(var i = 0; i < state.level_data.assistants.length; i++)
         {
-            assistant = state.level_data.assistants[i];
+            var assistant_dat = state.level_data.assistants[i];
 
-            state.shoppingAssistant = new ShoppingAssistant(state, game, assistant.x, assistant.y, state.dialogueList);
-            state.shoppingAssistant.onDialogueComplete.add(state.onDialogueComplete, state);
-            state.envir_layer.add(state.shoppingAssistant);
+            var assistant_obj  = new ShoppingAssistant(
+                state, 
+                game, 
+                assistant_dat.x, 
+                assistant_dat.y, 
+                state.dialogueList);
+            assistant_obj.onDialogueComplete.add(state.onDialogueComplete, state);
+            if (assistant_dat.scale){
+                state.shoppingAssistant.scale = assistant_dat.scale;
+            }
         }
     }
 }

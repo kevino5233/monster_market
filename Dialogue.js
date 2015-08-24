@@ -8,7 +8,6 @@ Dialogue = function(state, game, x, y, dialogueList)
         this.dialogueList = dialogueList;
 	this.dialogueLimit = 5;
 	this.dialogues = [];
-	this.interactable = true;
 	
 	this.x = x;
 	this.y = y;
@@ -70,12 +69,6 @@ Dialogue.prototype.shiftAll = function()
 
 Dialogue.prototype.show = function(listIndex, index, color)
 {
-	if(!this.interactable)
-	{
-		this.showUninteractableDialogue();
-		return;
-	}
-
 	var fixedListIndex;
 	var fixedIndex;
 
@@ -90,15 +83,3 @@ Dialogue.prototype.show = function(listIndex, index, color)
 
 	this.push(this.dialogueList[fixedListIndex][fixedIndex], color);
 }
-
-Dialogue.prototype.showUninteractableDialogue = function()
-{
-	/*
-	var dialogue = this.push("Leave me alone.");
-	dialogue.index = this.dialogueLimit;
-
-	var tween = this.game.add.tween(dialogue).to({ alpha: 0 }, 2000, "Linear");
-	tween.onComplete.add(this.onTweenComplete);
-	*/
-}
-
