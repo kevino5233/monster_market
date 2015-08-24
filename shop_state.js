@@ -1,22 +1,39 @@
 var shop_state = {
+	level_data: {
+        m_enemies: [
+        	{ x: 800, 	y: 250 	},
+        	{ x: 1150, 	y: 250 	},
+        	{ x: 1550,	y: 250 	},
+        	{ x: 2200,	y: 250	},
+        	{ x: 2450,	y: 250	},
+        	{ x: 2750,	y: 250	},
+        	{ x: 3350,	y: 250	}
+        ],
+
+        r_enemies: [
+        	{ x: 1200, 	y: 350 	},
+        	{ x: 1600, 	y: 60 	},
+
+        	{ x: 2500,	y: 60	},
+        	{ x: 2900,	y: 350	},
+
+        	{ x: 3750,	y: 200	}
+       	],
+        environment: [
+
+        ],
+
+        assistants: [
+        	{ x: 1300, 	y: 300 	},
+        	{ x: 2600, 	y: 300 	}
+        ]
+	},
+
 	create: function() 
 	{
-		//StateUtil.InitializeLayers(this);
-		this.background = game.add.group(),
-        this.player_layer = game.add.group(),
-        this.m_enemy_layer = game.add.group(),
-        this.r_enemy_layer = game.add.group(),
-        this.shelves = game.add.group(),
-        this.envir_layer = game.add.group(),
-        this.bottle_layer = game.add.group(),
-        this.UI_layer = game.add.group()
+		InitializeLayers(this);
+		LoadLevel(this, this.level_data);
 
-		var level_data = {
-			m_enemies: [
-
-			]
-		}
-		
 		game.world.setBounds(0, 0, 4000, 600);
 
 		this.background.add(new Phaser.Sprite(game, 0, 0, "shop_bg"));
@@ -28,18 +45,11 @@ var shop_state = {
 
 		this.generateShelves();
 
-		this.r_enemy_layer.add(new LotRangeEnemy(game, 600, 400, this));
-		this.m_enemy_layer.add(new LotMeleeEnemy(game, 600, 200, this));
-
 		this.shoppingList = new ShoppingList(this, game);
 		this.shoppingList.generate(5, 20);
 
 		this.shoppingListUi = new ShoppingListUi(this, game, this.shoppingList, 0, 0);
 		this.UI_layer.add(this.shoppingListUi);
-
-		this.shoppingAssistant = new ShoppingAssistant(this, game, 500, 300);
-		this.shoppingAssistant.onDialogueComplete.add(this.onDialogueComplete, this);
-		this.envir_layer.add(this.shoppingAssistant);
 
 		this.cursor = game.input.keyboard.createCursorKeys();
 
@@ -73,7 +83,8 @@ var shop_state = {
 	    },
 	    this);
 
-	    game.physics.arcade.collide(this.m_enemy_layer, this.shelves);
+	    game.physics.arcade.collide(this.m_enemy_layer, this.envir_layer);
+	    game.physics.arcade.collide(this.player, this.envir_layer);
 	},
 
 	preRender: function()
@@ -98,6 +109,8 @@ var shop_state = {
 
 	generateShelves: function()
 	{
+		this.shelves = [];
+
 		var shelfBase = new Shelf(this, game, 0, 0);
 		var halfWidth = shelfBase.width / 2;
 		var halfHeight = shelfBase.height / 2;
@@ -111,7 +124,8 @@ var shop_state = {
 			shelf.onInteract.add(this.onShelfInteract, this);
 			shelf.onSearchComplete.add(this.onShelfSearchComplete, this);
 
-			this.shelves.add(shelf);
+			this.shelves.push(shelf);
+			this.envir_layer.add(shelf);
 		}
 
 		for(var i = 0; i < 10; i++)
@@ -121,7 +135,8 @@ var shop_state = {
 			shelf.onSearchComplete.add(this.onShelfSearchComplete, this);
 			shelf.scale.y = -1;
 	
-			this.shelves.add(shelf);
+			this.shelves.push(shelf);
+			this.envir_layer.add(shelf);
 		}
 	},
 
