@@ -10,6 +10,7 @@ var load_state = {
         game.load.image("cashier_counter", "assets/cashier_counter.png");
         game.load.image("cashier_bg", "assets/cashier_floor.png");
         game.load.image("assistant", "assets/assistant.png");
+        game.load.image("money", "assets/money.png");
     	game.load.image("car_1", "assets/car_1.png");
     	game.load.image("car_2", "assets/car_2.png");
     	game.load.image("car_3", "assets/car_3.png");
@@ -31,6 +32,7 @@ var load_state = {
 
     create: function(){
         //game.state.start("lot");
+        //game.state.start("shop");
         game.state.start("cashier");
     },
 

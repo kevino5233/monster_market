@@ -65,12 +65,12 @@ function InitializeLayers(state)
 {
     state.background = state.game.add.group(),
     state.envir_layer = state.game.add.group(),
+    state.money_layer = state.game.add.group(),
     state.player_layer = state.game.add.group(),
     state.m_enemy_layer = state.game.add.group(),
     state.r_enemy_layer = state.game.add.group(),
     state.assistant_layer = state.game.add.group(),
     state.bottle_layer = state.game.add.group(),
-    state.money_layer = state.game.add.group(),
     state.UI_layer = state.game.add.group()
 }
 
