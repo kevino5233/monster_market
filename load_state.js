@@ -24,8 +24,8 @@ var load_state = {
     },
 
     create: function(){
-        //game.state.start("lot");
-        game.state.start("shop");
+        game.state.start("lot");
+        //game.state.start("shop");
     },
 
     update: function(){
