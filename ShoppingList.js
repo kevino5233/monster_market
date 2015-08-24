@@ -15,7 +15,10 @@ var shoppingListItemNames = [
 	"Wig",
 	"Flowers",
 	"Cake",
-	"Hat"
+	"Hat",
+	"Ice Cream",
+	"Battletoads",
+	"Fake Money"
 ]
 
 ShoppingList = function(state, game)

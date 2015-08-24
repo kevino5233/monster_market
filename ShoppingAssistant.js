@@ -19,9 +19,15 @@ ShoppingAssistant = function(state, game, x, y, dialogueList)
 	this.y = y;
 
 	this.sprite = new Phaser.Sprite(game, 0, 0, "assistant");
+	this.sprite.anchor.x = this.sprite.anchor.y = 0.5;
 	this.add(this.sprite);
 
-	this.dialogueUi = new Dialogue(this.state, this.game, 0, 0);
+	this.dialogueUi = new Dialogue(
+            this.state, 
+            this.game, 
+            0, 
+            -this.sprite.height/2, 
+            dialogueList);
 	this.dialogueUi.visible = false;
 	this.add(this.dialogueUi);
 

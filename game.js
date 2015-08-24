@@ -61,31 +61,82 @@ function DistanceBetween(obj_a, obj_b){
     return Math.sqrt(dist_squared);
 }
 
-var StateUtil = {
-    InitializeLayers: function(state)
-    {
-        state.background = state.game.add.group(),
-        state.player_layer = state.game.add.group(),
-        state.m_enemy_layer = state.game.add.group(),
-        state.r_enemy_layer = state.game.add.group(),
-        state.envir_layer = state.game.add.group(),
-        state.bottle_layer = state.game.add.group(),
-        state.UI_layer = state.game.add.group()
-    }
+function InitializeLayers(state)
+{
+    state.background = state.game.add.group(),
+    state.player_layer = state.game.add.group(),
+    state.m_enemy_layer = state.game.add.group(),
+    state.r_enemy_layer = state.game.add.group(),
+    state.envir_layer = state.game.add.group(),
+    state.bottle_layer = state.game.add.group(),
+    state.UI_layer = state.game.add.group()
 }
 
+function InitializeEvents(state)
+{
+    state.take_bottle_damage = function(player, bottle){
+        this.player.TakeDamage(.5);
+        this.bottle_layer.remove(bottle, true);
+    };
 
+    state.take_melee_damage = function(player, enemy){
+        this.player.TakeDamage(1);
+    };
+}
+
+function LoadLevel(state, levelData)
+{
+    //create ranged enemies
+    var r_enemy_data = state.level_data.r_enemies;
+    for (var i = 0; i < r_enemy_data.length; i++){
+        var r_enemy_dat = r_enemy_data[i];
+        state.r_enemy_layer.add(
+            new LotRangeEnemy(state.game, r_enemy_dat.x, r_enemy_dat.y, state));
+    }
+    //create melee enemies
+    var m_enemy_data = state.level_data.m_enemies;
+    for (var i = 0; i < m_enemy_data.length; i++){
+        var m_enemy_dat = m_enemy_data[i];
+        var m_enemy_obj = state.m_enemy_layer.add(
+            new LotMeleeEnemy(state.game, m_enemy_dat.x, m_enemy_dat.y, state));
+    }
+    //create environment
+    var envir_data = state.level_data.environment;
+    for (var i = 0; i < envir_data.length; i++){
+        var envir_dat = envir_data[i];
+        var envir_obj = state.envir_layer.create(
+            envir_dat.x, 
+            envir_dat.y, 
+            envir_dat.key);
+        state.game.physics.enable(envir_obj);
+        envir_obj.body.immovable = true;
+    }
+
+    if(state.level_data.assistants != null)
+    {
+        var assistant;
+        for(var i = 0; i < state.level_data.assistants.length; i++)
+        {
+            assistant = state.level_data.assistants[i];
+
+            state.shoppingAssistant = new ShoppingAssistant(state, game, assistant.x, assistant.y, state.dialogueList);
+            state.shoppingAssistant.onDialogueComplete.add(state.onDialogueComplete, state);
+            state.envir_layer.add(state.shoppingAssistant);
+        }
+    }
+}
 //==============================================================================
 //game start
 //==============================================================================
+
+//create the game object
+var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 WebFontConfig = {
 
     //  'active' means all requested fonts have finished loading
     //  We set a 1 second delay before calling 'createText'.
     //  For some reason if we don't the browser cannot render the text the first time it's created.
-    active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
-
     //  The Google Fonts we want to load (specify as many as you like in the array)
     google: {
       families: ['Press Start 2P']
@@ -93,8 +144,6 @@ WebFontConfig = {
 
 };
 
-//create the game object
-var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 game.state.add("boot", boot_state);
 game.state.add("load", load_state);

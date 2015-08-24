@@ -60,7 +60,7 @@ Shelf.prototype.update = function()
 	}
 
 	this.colliding = false;
-	this.game.physics.arcade.collide(this, this.state.player, this.onCollide, null);
+	//this.game.physics.arcade.collide(this, this.state.player, this.onCollide, null);
 
 	if(!this.searchComplete)
 	{
