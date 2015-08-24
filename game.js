@@ -100,10 +100,12 @@ function LoadLevel(state, levelData)
         envir_obj.body.immovable = true;
     }
 }
-
 //==============================================================================
 //game start
 //==============================================================================
+
+//create the game object
+var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
 WebFontConfig = {
 
@@ -119,9 +121,6 @@ WebFontConfig = {
 
 };
 
-//create the game object
-var game = new Phaser.Game(800, 600, Phaser.AUTO);
-game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 game.state.add("boot", boot_state);
 game.state.add("load", load_state);
