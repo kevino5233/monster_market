@@ -1,4 +1,4 @@
-ShoppingAssistant = function(state, game, x, y)
+ShoppingAssistant = function(state, game, x, y, dialogueList)
 {
 	this.state = state;
 	this.game = game;
@@ -21,7 +21,7 @@ ShoppingAssistant = function(state, game, x, y)
 	this.sprite = new Phaser.Sprite(game, 0, 0, "assistant");
 	this.add(this.sprite);
 
-	this.dialogueUi = new ShoppingAssistantDialogue(this.state, this.game, 0, 0);
+	this.dialogueUi = new Dialogue(this.state, this.game, 0, 0);
 	this.dialogueUi.visible = false;
 	this.add(this.dialogueUi);
 
@@ -117,7 +117,7 @@ ShoppingAssistant.prototype.endDialogue = function()
 {
 	this.talking = false;
 	this.currentDialogueListIndex++;
-	if(this.currentDialogueListIndex >= dialogueList.length)
+	if(this.currentDialogueListIndex >= this.dialogueUi.dialogueList.length)
 	{
 		this.currentDialogueListIndex = 0;
 	}

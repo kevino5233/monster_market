@@ -100,5 +100,6 @@ game.state.add("boot", boot_state);
 game.state.add("load", load_state);
 game.state.add("lot", lot_state);
 game.state.add("shop", shop_state);
+game.state.add("cashier", cashier_state);
 
 game.state.start("boot");
