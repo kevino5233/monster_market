@@ -7,7 +7,15 @@ var shoppingListItemNames = [
 	"Spinach",
 	"Didgeridoo",
 	"Bananas",
-	"Apples"
+	"Apples",
+	"Squash",
+	"Zucchini",
+	"Vibraphone",
+	"Car",
+	"Wig",
+	"Flowers",
+	"Cake",
+	"Hat"
 ]
 
 ShoppingList = function(state, game)
@@ -23,29 +31,22 @@ ShoppingList.prototype.constructor = ShoppingList;
 
 ShoppingList.prototype.generate = function(numItems, numShelves)
 {
-	var filledShelves = [];
+	var availableNames = [];
+	for(var i = 0; i < shoppingListItemNames.length; i++)
+		availableNames.push(shoppingListItemNames[i]);
+
+	var availableShelves = [];
+	for(var i = 1; i <= numShelves; i++)
+		availableShelves.push(i);
+
 	for(var i = 0; i < numItems; i++)
 	{
-		var name;
-		if(numItems < shoppingListItemNames)
-		{
-			name = shoppingListItemNames[this.game.rnd.integerInRange(0, shoppingListItemNames.length - 1)];
-		} else {
-			do {
-				name = shoppingListItemNames[this.game.rnd.integerInRange(0, shoppingListItemNames.length - 1)];
-			} while(this.getItem(name) !== null);
-		}
-		
-		if(i < numShelves)
-		{
-			var shelfId;
-			do {
-				shelfId = this.game.rnd.integerInRange(1, numShelves);
-			} while(filledShelves.indexOf(shelfId) >= 0);
-			filledShelves.push(shelfId);
+		var nameIndex = this.game.rnd.integerInRange(0, availableNames.length - 1);
+		var shelfIndex = this.game.rnd.integerInRange(0, availableShelves.length - 1);
 
-			this.add(name, shelfId);
-		}
+		this.add(availableNames[nameIndex], availableShelves[shelfIndex]);
+		availableNames.splice(nameIndex, 1);
+		availableShelves.splice(shelfIndex, 1);
 	}
 }
 
