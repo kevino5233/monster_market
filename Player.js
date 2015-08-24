@@ -5,6 +5,7 @@ Player = function(game, x, y, state)
     this.game = game;
 
     this.base_velocity = 200;
+    this.tween_active = false;
     this.invincible_frames = 60;
     this.invincible_frames_for = 0;
 
@@ -19,14 +20,14 @@ Player = function(game, x, y, state)
 
     this.hearts = [];
     for (var i = 0; i < this.health; i++){
-	var UI_x = 16 + 48 * i;
-	var UI_y = 16;
-	var heart = game.add.sprite(UI_x, UI_y, "heart", 0);
-	heart.animations.add("full", [0]);
-	heart.animations.add("half", [1]);
-	heart.animations.play("full");
-	this.hearts.push(heart);
-	this.state.UI_layer.add(heart);
+        var UI_x = 16 + 48 * i;
+        var UI_y = 16;
+        var heart = game.add.sprite(UI_x, UI_y, "heart", 0);
+        heart.animations.add("full", [0]);
+        heart.animations.add("half", [1]);
+        heart.animations.play("full");
+        this.hearts.push(heart);
+        this.state.UI_layer.add(heart);
     }
 }
 
@@ -35,67 +36,70 @@ Player.prototype.constructor = Player;
 
 Player.prototype.TakeDamage = function(damage){
     if (!this.Invincible()){
-	this.damage(damage);
-	this.invincible_frames_for = this.invincible_frames;
+        this.damage(damage);
+        this.invincible_frames_for = this.invincible_frames;
     }
 }
 
 Player.prototype.Invincible = function(){
+    //return true;
     return this.invincible_frames_for > 0;
 }
 
 Player.prototype.update = function()
 {
-	if (this.state.cursor.up.isDown){
-	    this.body.velocity.y = -this.base_velocity;
-	} else if (this.state.cursor.down.isDown){
-	    this.body.velocity.y = this.base_velocity;
-	} else {
-	    this.body.velocity.y = 0;
-	}
-	if (this.state.cursor.left.isDown){
-	    this.body.velocity.x = -this.base_velocity;
-	} else if (this.state.cursor.right.isDown){
-	    this.body.velocity.x = this.base_velocity;
-	} else {
-	    this.body.velocity.x = 0;
-	}
+    if (!this.tween_active){
+        if (this.state.cursor.up.isDown){
+            this.body.velocity.y = -this.base_velocity;
+        } else if (this.state.cursor.down.isDown){
+            this.body.velocity.y = this.base_velocity;
+        } else {
+            this.body.velocity.y = 0;
+        }
+        if (this.state.cursor.left.isDown){
+            this.body.velocity.x = -this.base_velocity;
+        } else if (this.state.cursor.right.isDown){
+            this.body.velocity.x = this.base_velocity;
+        } else {
+            this.body.velocity.x = 0;
+        }
 
-	var anim_state = "idle";
-	var player_x_vel = this.body.velocity.x;
-	var player_y_vel = this.body.velocity.y;
-	if (player_x_vel || player_y_vel){
-	    anim_state = "walk";
-	    if ((!player_x_vel && this.right) || player_x_vel > 0){
-		this.right = true;
-	    } else {
-		this.right = false;
-	    }
-	} else {
-	    if (this.right){
-		this.right = true;
-	    } else {
-		this.right = false;
-	    }
-	}
-	if (this.right){
-	    this.scale.x = 1;
-	} else {
-	    this.scale.x = -1;
-	}
-	this.animations.play(anim_state);
+        var anim_state = "idle";
+        var player_x_vel = this.body.velocity.x;
+        var player_y_vel = this.body.velocity.y;
+        if (player_x_vel || player_y_vel){
+            anim_state = "walk";
+            if ((!player_x_vel && this.right) || player_x_vel > 0){
+                this.right = true;
+            } else {
+                this.right = false;
+            }
+        } else {
+            if (this.right){
+                this.right = true;
+            } else {
+                this.right = false;
+            }
+        }
+        if (this.right){
+            this.scale.x = 1;
+        } else {
+            this.scale.x = -1;
+        }
+        this.animations.play(anim_state);
 
-	if (this.Invincible()){
-	    this.invincible_frames_for -= 1;
-	}
-	if (this.health < this.hearts.length){
-	    if (Math.ceil(this.health) == this.hearts.length){
-		this.hearts[this.hearts.length - 1].animations.play("half");
-	    } else {
-		var heart = this.hearts.pop();
-		this.state.UI_layer.remove(heart, true);
-	    }
-	}
+        if (this.Invincible()){
+            this.invincible_frames_for -= 1;
+        }
+        if (this.health < this.hearts.length){
+            if (Math.ceil(this.health) == this.hearts.length){
+                this.hearts[this.hearts.length - 1].animations.play("half");
+            } else {
+                var heart = this.hearts.pop();
+                this.state.UI_layer.remove(heart, true);
+            }
+        }
 
-	UpdateCamera(game.camera, this);
+        UpdateCamera(game.camera, this);
+    }
 }

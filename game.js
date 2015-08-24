@@ -31,16 +31,16 @@ function UpdateCamera(camera, player) {
     var outside_deadzone_down = cam_diff_y - deadzone_h > deadzone_trig_h;
     //adjusts camer accordingly
     if (outside_deadzone_left || outside_deadzone_right){
-	camera.x = player.x - deadzone_trig_w;
-	if (outside_deadzone_right){
-	    camera.x -= deadzone_w;
-	}
+        camera.x = player.x - deadzone_trig_w;
+        if (outside_deadzone_right){
+            camera.x -= deadzone_w;
+        }
     }
     if (outside_deadzone_up || outside_deadzone_down){
-	camera.y = player.y - deadzone_trig_h;
-	if (outside_deadzone_up){
-	    camera.y -= deadzone_h;
-	}
+        camera.y = player.y - deadzone_trig_h;
+        if (outside_deadzone_up){
+            camera.y -= deadzone_h;
+        }
     }
 }
 
@@ -48,12 +48,12 @@ function UpdateCamera(camera, player) {
 //Uses the center of objects for a better in-game feel
 function DistanceBetween(obj_a, obj_b){
     var a = {
-	x: obj_a.x + obj_a.width / 2, 
-	y: obj_a.y + obj_a.height / 2
+        x: obj_a.x + obj_a.width / 2, 
+        y: obj_a.y + obj_a.height / 2
     };
     var b = {
-	x: obj_b.x + obj_b.width / 2, 
-	y: obj_b.y + obj_b.height / 2
+        x: obj_b.x + obj_b.width / 2, 
+        y: obj_b.y + obj_b.height / 2
     };
     var diff_x = a.x - b.x;
     var diff_y = a.y - b.y;
