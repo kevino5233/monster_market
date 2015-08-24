@@ -10,7 +10,7 @@ ShoppingListUi = function(state, game, sourceList, x, y)
 	this.text = new Phaser.Text(game, 0, 0, "");
 	this.invalidate();
 	this.text.anchor.x = this.text.anchor.y = 0.5;
-	this.text.x = game_w - this.text.width/2 - 20;
+	this.text.x = game_w - this.text.width/2 - 40;
 	this.text.y = this.text.height/2;
 	this.text.font = 'Press Start 2P';
 	this.text.align = "right";

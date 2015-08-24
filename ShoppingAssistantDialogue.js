@@ -68,14 +68,13 @@ var dialogueList = [
 ShoppingAssistantDialogue = function(state, game, x, y)
 {
 	this.state = state;
+	this.game = game;
 
 	Phaser.Group.call(this, game);
-	this.content = new Phaser.Text(game, x, y, "dialogue");
-	this.content.anchor.x = this.content.anchor.y = 0.5;
-	this.content.font = "Press Start 2P";
-	this.content.fontSize = 12;
-	this.add(this.content);
 
+	this.dialogueLimit = 5;
+	this.dialogues = [];
+	this.interactable = true;
 	
 	this.x = x;
 	this.y = y;
@@ -84,8 +83,60 @@ ShoppingAssistantDialogue = function(state, game, x, y)
 ShoppingAssistantDialogue.prototype = Object.create(Phaser.Group.prototype);
 ShoppingAssistantDialogue.prototype.constructor = ShoppingAssistantDialogue;
 
-ShoppingAssistantDialogue.prototype.show = function(listIndex, index)
+ShoppingAssistantDialogue.prototype.onTweenComplete = function(target, tween)
 {
+	if(target.index >= this.dialogueLimit - 1) this.remove(target);
+}
+
+ShoppingAssistantDialogue.prototype.push = function(text, color)
+{
+	var dialogue = new Phaser.Text(game, 0, 0, text);
+	dialogue.anchor.x = dialogue.anchor.y = 0.5;
+	dialogue.font = "Press Start 2P";
+	dialogue.addColor(color, 0);
+	dialogue.fontSize = 12;
+
+	this.shiftAll();
+	this.dialogues[0] = dialogue;
+	this.add(dialogue);
+
+	return dialogue;
+}
+
+ShoppingAssistantDialogue.prototype.shiftAll = function()
+{
+	var amount = Math.min(this.dialogueLimit, this.dialogues.length);
+	var dialogue;
+	for(var i = amount - 1; i >= 0; i--)
+	{
+		dialogue = this.dialogues[i];
+		dialogue.index = i;
+
+		var tween = this.game.add.tween(dialogue).to(
+		{
+			y: dialogue.y - dialogue.height,
+			alpha: 1 - Math.min(i + 1, this.dialogueLimit)/this.dialogueLimit
+		}, 500, Phaser.Easing.Cubic.Out, true);
+		tween.onComplete.add(this.onTweenComplete);
+
+		if(i < this.dialogueLimit - 1)
+		{
+			this.dialogues[i + 1] = dialogue;
+			dialogue.index = i + 1;
+		}
+
+		this.dialogues[i] = null;
+	}
+}
+
+ShoppingAssistantDialogue.prototype.show = function(listIndex, index, color)
+{
+	if(!this.interactable)
+	{
+		this.showUninteractableDialogue();
+		return;
+	}
+
 	var fixedListIndex;
 	var fixedIndex;
 
@@ -98,5 +149,16 @@ ShoppingAssistantDialogue.prototype.show = function(listIndex, index)
 		fixedIndex = dialogueList[fixedListIndex].length;
 	else fixedIndex = index;
 
-	this.content.text = dialogueList[fixedListIndex][fixedIndex];
+	this.push(dialogueList[fixedListIndex][fixedIndex], color);
+}
+
+ShoppingAssistantDialogue.prototype.showUninteractableDialogue = function()
+{
+	/*
+	var dialogue = this.push("Leave me alone.");
+	dialogue.index = this.dialogueLimit;
+
+	var tween = this.game.add.tween(dialogue).to({ alpha: 0 }, 2000, "Linear");
+	tween.onComplete.add(this.onTweenComplete);
+	*/
 }

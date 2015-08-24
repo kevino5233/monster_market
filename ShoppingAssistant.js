@@ -7,7 +7,7 @@ ShoppingAssistant = function(state, game, x, y)
 	this.talking = false;
 
 	this.onDialogueComplete = new Phaser.Signal();
-	this.dialogueTime = 0.5;
+	this.dialogueTime = 0.35;
 	this.dialogueTimer = 0;
 	this.dialogueLength = 10;
 	this.currentDialogueIndex = 0;
@@ -56,15 +56,21 @@ ShoppingAssistant.prototype.update = function()
 
 ShoppingAssistant.prototype.checkInteraction = function()
 {
-	if(this.enabled && this.isWithinInteractionRange() &&
+	if(this.isWithinInteractionRange() &&
 		this.game.input.keyboard.isDown(k_interact))
 	{
-		if(this.talking && this.canAdvanceDialogue)
+		if(this.enabled)
 		{
-			this.advanceDialogue();
-		} else if(!this.talking)
-		{
-			this.beginDialogue();
+			if(this.talking && this.canAdvanceDialogue)
+			{
+				this.advanceDialogue();
+			} else if(!this.talking)
+			{
+				this.beginDialogue();
+			}
+		} else {
+			this.dialogueUi.showUninteractableDialogue();
+			this.dialogueTimer = 0;
 		}
 	}
 }
@@ -95,8 +101,12 @@ ShoppingAssistant.prototype.advanceDialogue = function()
 			this.currentDialogueIndex = this.dialogueLength - 1;
 			this.onDialogueComplete.dispatch(this);
 		} else {
-			this.dialogueUi.show(this.currentDialogueListIndex,
-			 this.currentDialogueIndex);
+			if(this.currentDialogueIndex < this.dialogueLength - 1)
+				this.dialogueUi.show(this.currentDialogueListIndex,
+			 		this.currentDialogueIndex, "#000000");
+			else
+				this.dialogueUi.show(this.currentDialogueListIndex,
+			 		this.currentDialogueIndex, "#55ff55");
 		}
 
 		this.dialogueTimer = 0;
@@ -111,6 +121,4 @@ ShoppingAssistant.prototype.endDialogue = function()
 	{
 		this.currentDialogueListIndex = 0;
 	}
-
-	this.dialogueUi.visible = false;
 }
