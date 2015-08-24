@@ -131,15 +131,13 @@ ShoppingAssistant.prototype.endDialogue = function()
 	}
 }
 ShoppingAssistant.prototype.reset = function(){
-    var dialogueList = this.dialogueList;
-    this.dialogueUi.destroy();
     this.dialogueUi = new Dialogue(
         this.state, 
         this.game, 
         0, 
         -this.sprite.height/2, 
-        dialogueList);
-    this.dialogueLength = dialogueList[0].length;
+        this.dialogueList);
+    this.dialogueLength = this.dialogueList[0].length;
     this.currentDialogueIndex = 0;
     this.canAdvanceDialogue = false;
     this.currentDialogueListIndex = 0;
@@ -151,6 +149,8 @@ ShoppingAssistant.prototype.reset = function(){
     this.talking = false;
 }
 ShoppingAssistant.prototype.loadDialogue = function(dialogueList){
+    this.dialogueUi.removeAll(true);
+    this.dialogueUi.destroy();
     this.dialogueList = dialogueList;
     this.reset();
 }

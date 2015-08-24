@@ -84,8 +84,6 @@ var lot_state = {
             this);
         game.physics.arcade.collide(this.m_enemy_layer, this.envir_layer);
         game.physics.arcade.collide(this.player, this.envir_layer);
-        this.UI_layer.x = game.camera.x;
-        this.UI_layer.y = game.camera.y;
         if (!(this.end_checkpoint.x || this.end_checkpoint.y)){
             if (this.end_checkpoint.alpha >= 1){
                 game.state.start("shop");
@@ -102,6 +100,11 @@ var lot_state = {
 
     take_melee_damage: function(player, enemy){
         this.player.TakeDamage(1);
+    },
+
+    preRender: function(){
+        this.UI_layer.x = game.camera.x;
+        this.UI_layer.y = game.camera.y;
     },
 
     begin_exit: function(){

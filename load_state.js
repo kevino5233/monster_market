@@ -6,7 +6,7 @@ var load_state = {
         game.load.image("large_shelf", "assets/large_shelf.png");
         game.load.image("large_v_shelf", "assets/large_v_shelf.png");
         game.load.image("shop_bg", "assets/shop.png");
-        game.load.image("cashier", "assets/cashier.png");
+        game.load.image("bullet", "assets/bullet.png");
         game.load.image("cashier_counter", "assets/cashier_counter.png");
         game.load.image("cashier_bg", "assets/cashier_floor.png");
         game.load.image("assistant", "assets/assistant.png");
@@ -18,6 +18,7 @@ var load_state = {
     	game.load.spritesheet("player", "assets/player.png", 64, 64);
     	game.load.spritesheet("lot_m_enemy", "assets/lot_m_enemy.png", 64, 128);
     	game.load.spritesheet("lot_r_enemy", "assets/lot_r_enemy.png", 64, 128);
+        game.load.spritesheet("cashier", "assets/cashier.png", 64, 128);
     	game.load.spritesheet("bottle", "assets/bottle.png", 32, 32);
     	game.load.audio("lot_music", "assets/parking.mp3");
     	game.load.audio("shop_music", "assets/shopping.mp3");

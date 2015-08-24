@@ -81,6 +81,11 @@ function InitializeEvents(state)
         this.bottle_layer.remove(bottle, true);
     };
 
+    state.take_bullet_damage = function(player, bullet){
+        this.player.TakeDamage(1);
+        this.bottle_layer.remove(bullet, true);
+    };
+
     state.take_melee_damage = function(player, enemy){
         this.player.TakeDamage(1);
     };
