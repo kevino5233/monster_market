@@ -3,7 +3,7 @@ var cashier_state = {
         "Did you find everything, okay?",
         "No?",
         "Good. We hate your kind",
-        "That'll be $27 please",
+        "That'll be $28 please",
         "Two twenties is all you have?",
         "TOO BAD",
         "We only accept exact change."]],
