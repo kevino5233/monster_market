@@ -113,7 +113,7 @@ var shop_state = {
 		this.generateShelves();
 
 		this.shoppingList = new ShoppingList(this, game);
-		this.shoppingList.generate(5, 18);
+		this.shoppingList.generate(1, 18);
 
 		this.shoppingListUi = new ShoppingListUi(this, game, this.shoppingList, 0, 0);
 		this.UI_layer.add(this.shoppingListUi);
@@ -168,7 +168,7 @@ var shop_state = {
 
 	onWin: function()
 	{
-		// LOAD NEXT STATE HERE
+		game.state.start("cashier");
 	},
 
 	preRender: function()
