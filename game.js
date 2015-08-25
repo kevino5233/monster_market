@@ -134,7 +134,16 @@ function LoadLevel(state, levelData)
             envir_dat.x, 
             envir_dat.y, 
             envir_dat.key);
+
         state.game.physics.enable(envir_obj);
+        if(envir_dat.key === "car_1" || envir_dat.key === "car_3")
+        {
+            envir_obj.body.setSize(187, 87, 2, 5);
+        } else if(envir_dat.key === "car_2")
+        {
+            envir_obj.body.setSize(82, 180, 6, 6);
+        }
+
         envir_obj.body.immovable = true;
         if (envir_dat.scale){
             envir_obj.scale = envir_dat.scale;

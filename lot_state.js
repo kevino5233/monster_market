@@ -58,6 +58,9 @@ var lot_state = {
         this.end_checkpoint = game.add.sprite(2150, 300, "black");
         this.end_checkpoint.scale = {x: 100, y: 100};
         this.end_checkpoint.alpha = 0;
+
+        this.UI_layer.add(new ObjectiveUi(this, game, "Get to the grocery store."));
+
         game.physics.enable(this.end_checkpoint);
         this.cursor = game.input.keyboard.createCursorKeys();
     },

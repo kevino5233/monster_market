@@ -94,6 +94,9 @@ var cashier_state = {
         this.money_paid = 40;
         this.num_times_correct_pay = 0;
 
+        this.objectiveUi = new ObjectiveUi(this, game, "Pay for your items.");
+        this.UI_layer.add(this.objectiveUi);
+
 	var padding = 32;
         this.money_ui_text = new Phaser.Text(game, 0, 0, "$" + this.money_paid);
 	this.money_ui_text.anchor.x = 1;
@@ -144,8 +147,8 @@ var cashier_state = {
             this.end_checkpoint,
             this.begin_exit,
             function(player, end_checkpoint){
-				return player.state.num_times_correct_pay == 2;
-			},
+                    return player.state.num_times_correct_pay == 2;
+                },
             this);
         game.physics.arcade.overlap(
             this.player, 
@@ -184,6 +187,7 @@ var cashier_state = {
     {
         if (this.num_times_correct_pay == 0){
             assistant.loadDialogue(this.first_bad_change_dialogue);
+            this.objectiveUi.setObjective("Pick up $28 in bills.");
             this.throw_money(assistant.x, assistant.y);
         } else if (this.num_times_correct_pay == 1){
             assistant.loadDialogue(this.second_bad_change_dialogue);
@@ -194,6 +198,7 @@ var cashier_state = {
                 this.gunman.animations.play("pickup");
                 this.bg_music.stop();
                 this.bg_music = game.add.audio("climax_music", 1, true).play();
+                this.objectiveUi.setObjective("RUN.");
             }
             assistant.enabled = false;
         }
