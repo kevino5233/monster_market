@@ -17,6 +17,7 @@ Player = function(game, x, y, state)
     this.animations.add("walk", [8, 9, 10, 11], 4, true);
 
     this.game.physics.enable(this);
+    this.body.setSize(50, 64, 12, 10);
 
     this.hearts = [];
     for (var i = 0; i < this.health; i++){

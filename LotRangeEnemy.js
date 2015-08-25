@@ -54,6 +54,7 @@ LotRangeEnemy.prototype.ThrowBottle = function(){
     bottle.animations.play("projectile");
     game.physics.enable(bottle);
     bottle.body.velocity = bottle_v;
+    bottle.body.setSize(21, 21, 5, 6);
     this.state.bottle_layer.add(bottle);
 };
 
