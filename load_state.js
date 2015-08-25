@@ -3,6 +3,7 @@ var load_state = {
         game.load.image("lot_bg", "assets/parking_lot.png");
         game.load.image("black", "assets/black.png");
         game.load.image("shelf", "assets/shelf.png");
+        game.load.image("shelf-v", "assets/shelf-v.png");
         game.load.image("large_shelf", "assets/large_shelf.png");
         game.load.image("large_v_shelf", "assets/large_v_shelf.png");
         game.load.image("shop_bg", "assets/shop.png");

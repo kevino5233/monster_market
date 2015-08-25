@@ -20,10 +20,12 @@ var cashier_state = {
         "Must've been a fluke!",
         "Do it again",
         "maybe I'll be convinced",
+        "$28",
         "You monster."]],
     second_bad_change_dialogue: [[
         "",
         "So it was a fluke?",
+        "Can't even pick up $28...",
         "Ha, stupid monster!"]],
     second_correct_change: [[
         "",
@@ -35,10 +37,16 @@ var cashier_state = {
         "So get the hell out of my store."]],
     level_data: {
         m_enemies: [],
-        r_enemies: [],
+        r_enemies: [
+        { x: 600, y: 60 },
+        { x: 180, y: 200 },
+        { x: 700, y: 0 },
+        { x: 1075, y: 20 },
+        { x: 1150, y: 200 }
+        ],
         environment: [
         { x: 150, y: 0, key: "shelf" },
-        { x: 150, y: 600, key: "shelf", scale: {x: 1, y: -1}},
+        { x: 150, y: 496, key: "shelf-v" },
         { x: 200, y: 240, key: "large_shelf" },
         { x: 700, y: 100, key: "large_v_shelf" },
         { x: 1050, y: 450, key: "cashier_counter" }
@@ -64,6 +72,13 @@ var cashier_state = {
         this.background.create(0, 0, "cashier_bg");
         this.player_layer.add(new Player(game, 400, 200, this));
         this.player = this.player_layer.children[0];
+        this.end_player_tween = game.add.tween(this.player);
+        this.end_player_tween.to({x: -100, y: 300}, 1999);
+        this.end_player_tween.onStart.add(
+            function(player){
+                player.tween_active = false;
+            },
+            this.player);
         this.assistant = this.assistant_layer.children[0];
         this.assistant.sprite.visible = false;
         this.cursor = game.input.keyboard.createCursorKeys();
@@ -90,9 +105,9 @@ var cashier_state = {
         this.money_ui_bg = new Phaser.Graphics(game, 0, 0);
 	this.money_ui_bg.beginFill(0xffffff);
 	this.money_ui_bg.drawRect(this.money_ui_text.x - this.money_ui_text.width - 10,
-            this.money_ui_text.y - this.money_ui_text.height - 10,
-            this.money_ui_text.width + 20,
-            this.money_ui_text.height + 20);
+        this.money_ui_text.y - this.money_ui_text.height - 10,
+        this.money_ui_text.width + 20,
+        this.money_ui_text.height + 20);
 	this.money_ui_bg.alpha = 0.5;
         this.UI_layer.add(this.money_ui_text);
         this.UI_layer.add(this.money_ui_bg);
@@ -109,14 +124,25 @@ var cashier_state = {
         this.bill_ui_bg = new Phaser.Graphics(game, 0, 0);
 	this.bill_ui_bg.beginFill(0xffffff);
 	this.bill_ui_bg.drawRect(this.bill_ui_text.x - this.money_ui_text.width - 10,
-            this.bill_ui_text.y - this.money_ui_text.height - 10,
-            this.money_ui_text.width + 20,
-            this.money_ui_text.height + 20);
+        this.bill_ui_text.y - this.money_ui_text.height - 10,
+        this.money_ui_text.width + 20,
+        this.money_ui_text.height + 20);
 	this.bill_ui_bg.alpha = 0.5;
         this.UI_layer.add(this.bill_ui_text);
         this.UI_layer.add(this.bill_ui_bg);
+
+        this.end_checkpoint = game.add.sprite(2150, 300, "black");
+        this.end_checkpoint.scale = {x: 100, y: 100};
+        this.end_checkpoint.alpha = 0;
+        game.physics.enable(this.end_checkpoint);
     },
     update: function(){
+        game.physics.arcade.overlap(
+            this.player,
+            this.end_checkpoint,
+            this.begin_exit,
+            null,
+            this);
         game.physics.arcade.overlap(
             this.player, 
             this.bottle_layer, 
@@ -138,8 +164,16 @@ var cashier_state = {
             null,
             this);
         game.physics.arcade.collide(this.m_enemy_layer, this.envir_layer);
+        game.physics.arcade.collide(this.money_layer, this.r_enemy_layer);
+        game.physics.arcade.collide(this.money_layer, this.m_enemy_layer);
         game.physics.arcade.collide(this.money_layer, this.envir_layer);
         game.physics.arcade.collide(this.player, this.envir_layer);
+        if (!(this.end_checkpoint.x || this.end_checkpoint.y)){
+            if (this.end_checkpoint.alpha >= 1){
+            } else {
+                this.end_checkpoint.alpha += 1/120;
+            }
+        }
     },
     onDialogueComplete: function(assistant)
     {
@@ -220,6 +254,13 @@ var cashier_state = {
             this.money_ui_text.text = "$" + this.money_paid;
             this.UI_layer.x = game.camera.x;
             this.UI_layer.y = game.camera.y;
+    },
+    begin_exit: function(){
+        this.UI_layer.add(this.end_checkpoint);
+        this.end_checkpoint.x = 0;
+        this.end_checkpoint.y = 0;
+        this.end_checkpoint.scale = {x: game_w, y: game_h};
+        this.end_player_tween.start();
     },
     resize: function(){
     },

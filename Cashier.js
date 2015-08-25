@@ -53,6 +53,7 @@ Cashier.prototype.update = function(){
                 this.y + this.height / 2, 
                 "bullet");
             bullet.scale.x = this.scale.x;
+            bullet.outOfBoundsKill = true;
             game.physics.enable(bullet);
             bullet.body.velocity.x = this.bullet_velocity * this.scale.x;
             this.frames_reloaded = 0;

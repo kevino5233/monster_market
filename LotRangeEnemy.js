@@ -49,6 +49,7 @@ LotRangeEnemy.prototype.ThrowBottle = function(){
 	this.x,
 	this.y + this.height / 2,
 	"bottle");
+    bottle.outOfBoundsKill = true;
     bottle.animations.add("projectile", [0, 1, 2, 3], 8, true);
     bottle.animations.play("projectile");
     game.physics.enable(bottle);
