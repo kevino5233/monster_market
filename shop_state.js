@@ -122,6 +122,9 @@ var shop_state = {
 
 		this.timer = new Phaser.Time(game);
 		this.timer.advancedTiming = true;
+
+		this.objectiveUi = new ObjectiveUi(this, game, "Search the shelves or ask an assistant.");
+		this.UI_layer.add(this.objectiveUi);
 	},
 
 	update: function()
@@ -143,6 +146,11 @@ var shop_state = {
 
 	    game.physics.arcade.collide(this.m_enemy_layer, this.envir_layer);
 	    game.physics.arcade.collide(this.player, this.envir_layer);
+
+	    if(this.shoppingList.hasFoundAllItems())
+	    {
+	    	this.objectiveUi.setObjective("Good job! Now get to the cashier.");
+	    }
 
 	    this.checkWin();
 	},
