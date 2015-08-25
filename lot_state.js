@@ -42,10 +42,7 @@ var lot_state = {
         LoadLevel(this, this.level_data);
         game.world.setBounds(0, 0, 2400, 600);
         this.background.create(0, 0, "lot_bg");
-
-        this.bg_music = game.add.audio("lot_music");
-        this.bg_music.play("", 0, 1, true);
-        this.bg_music.onLoop.add(this.onLoop, this);
+        //this.bg_music = game.add.audio("lot_music", 1, true).play();
         //load sprites
         //add  and set up player
         this.player_layer.add(new Player(game, 400, 300, this));
@@ -61,15 +58,10 @@ var lot_state = {
         this.end_checkpoint.scale = {x: 100, y: 100};
         this.end_checkpoint.alpha = 0;
 
-        this.UI_layer.add(new ObjectiveUi(this, game, "Get to the store."));
+        this.UI_layer.add(new ObjectiveUi(this, game, "Get to the grocery store."));
 
         game.physics.enable(this.end_checkpoint);
         this.cursor = game.input.keyboard.createCursorKeys();
-    },
-
-    onLoop: function()
-    {
-    	this.bg_music.play("", 0, 1, true);
     },
 
     update: function(){
@@ -119,7 +111,6 @@ var lot_state = {
     },
 
     begin_exit: function(){
-    	this.bg_music.stop();
         this.UI_layer.add(this.end_checkpoint);
         this.end_checkpoint.x = 0;
         this.end_checkpoint.y = 0;

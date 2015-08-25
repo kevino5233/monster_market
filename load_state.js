@@ -23,7 +23,6 @@ var load_state = {
     	game.load.spritesheet("bottle", "assets/bottle.png", 32, 32);
     	game.load.audio("lot_music", "assets/parking.mp3");
     	game.load.audio("shop_music", "assets/shopping.mp3");
-        game.load.audio("run_music", "assets/climax.mp3");
         game.load.script("webfont", "//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js");
     },
 
