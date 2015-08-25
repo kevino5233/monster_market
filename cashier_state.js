@@ -1,9 +1,10 @@
 var cashier_state = {
+	objective: "Pay for your groceries",
     dialogueList: [[
         "Did you find everything, okay?",
         "No?",
         "Good. We hate your kind",
-        "That'll be $27 please",
+        "That'll be $28 please",
         "Two twenties is all you have?",
         "TOO BAD",
         "We only accept exact change."]],
@@ -20,10 +21,12 @@ var cashier_state = {
         "Must've been a fluke!",
         "Do it again",
         "maybe I'll be convinced",
+        "$28",
         "You monster."]],
     second_bad_change_dialogue: [[
         "",
         "So it was a fluke?",
+        "Can't even pick up $28...",
         "Ha, stupid monster!"]],
     second_correct_change: [[
         "",
@@ -35,10 +38,16 @@ var cashier_state = {
         "So get the hell out of my store."]],
     level_data: {
         m_enemies: [],
-        r_enemies: [],
+        r_enemies: [
+        { x: 600, y: 60 },
+        { x: 180, y: 200 },
+        { x: 700, y: 0 },
+        { x: 1075, y: 20 },
+        { x: 1150, y: 200 }
+        ],
         environment: [
         { x: 150, y: 0, key: "shelf" },
-        { x: 150, y: 600, key: "shelf", scale: {x: 1, y: -1}},
+        { x: 150, y: 496, key: "shelf-v" },
         { x: 200, y: 240, key: "large_shelf" },
         { x: 700, y: 100, key: "large_v_shelf" },
         { x: 1050, y: 450, key: "cashier_counter" }
@@ -62,8 +71,16 @@ var cashier_state = {
         LoadLevel(this, this.level_data);
         game.world.setBounds(0, 0, 1400, 600);
         this.background.create(0, 0, "cashier_bg");
+        this.bg_music = game.add.audio("shopping_music", 1, true).play();
         this.player_layer.add(new Player(game, 400, 200, this));
         this.player = this.player_layer.children[0];
+        this.end_player_tween = game.add.tween(this.player);
+        this.end_player_tween.to({x: -100, y: 300}, 1999);
+        this.end_player_tween.onStart.add(
+            function(player){
+                player.tween_active = false;
+            },
+            this.player);
         this.assistant = this.assistant_layer.children[0];
         this.assistant.sprite.visible = false;
         this.cursor = game.input.keyboard.createCursorKeys();
@@ -90,9 +107,9 @@ var cashier_state = {
         this.money_ui_bg = new Phaser.Graphics(game, 0, 0);
 	this.money_ui_bg.beginFill(0xffffff);
 	this.money_ui_bg.drawRect(this.money_ui_text.x - this.money_ui_text.width - 10,
-            this.money_ui_text.y - this.money_ui_text.height - 10,
-            this.money_ui_text.width + 20,
-            this.money_ui_text.height + 20);
+        this.money_ui_text.y - this.money_ui_text.height - 10,
+        this.money_ui_text.width + 20,
+        this.money_ui_text.height + 20);
 	this.money_ui_bg.alpha = 0.5;
         this.UI_layer.add(this.money_ui_text);
         this.UI_layer.add(this.money_ui_bg);
@@ -109,14 +126,27 @@ var cashier_state = {
         this.bill_ui_bg = new Phaser.Graphics(game, 0, 0);
 	this.bill_ui_bg.beginFill(0xffffff);
 	this.bill_ui_bg.drawRect(this.bill_ui_text.x - this.money_ui_text.width - 10,
-            this.bill_ui_text.y - this.money_ui_text.height - 10,
-            this.money_ui_text.width + 20,
-            this.money_ui_text.height + 20);
+        this.bill_ui_text.y - this.money_ui_text.height - 10,
+        this.money_ui_text.width + 20,
+        this.money_ui_text.height + 20);
 	this.bill_ui_bg.alpha = 0.5;
         this.UI_layer.add(this.bill_ui_text);
         this.UI_layer.add(this.bill_ui_bg);
+
+        this.end_checkpoint = game.add.sprite(0, 250, "black");
+        this.end_checkpoint.scale = {x: 100, y: 100};
+        this.end_checkpoint.alpha = 0;
+        game.physics.enable(this.end_checkpoint);
     },
     update: function(){
+        game.physics.arcade.overlap(
+            this.player,
+            this.end_checkpoint,
+            this.begin_exit,
+            function(player, end_checkpoint){
+				return player.state.num_times_correct_pay == 2;
+			},
+            this);
         game.physics.arcade.overlap(
             this.player, 
             this.bottle_layer, 
@@ -138,8 +168,17 @@ var cashier_state = {
             null,
             this);
         game.physics.arcade.collide(this.m_enemy_layer, this.envir_layer);
+        game.physics.arcade.collide(this.money_layer, this.r_enemy_layer);
+        game.physics.arcade.collide(this.money_layer, this.m_enemy_layer);
         game.physics.arcade.collide(this.money_layer, this.envir_layer);
         game.physics.arcade.collide(this.player, this.envir_layer);
+        if (!(this.end_checkpoint.x || this.end_checkpoint.y)){
+            if (this.end_checkpoint.alpha >= 1){
+                this.bg_music.stop();
+            } else {
+                this.end_checkpoint.alpha += 1/120;
+            }
+        }
     },
     onDialogueComplete: function(assistant)
     {
@@ -153,6 +192,8 @@ var cashier_state = {
             if (this.num_times_correct_pay == 2){
                 this.gunman.scale.x = -1;
                 this.gunman.animations.play("pickup");
+                this.bg_music.stop();
+                this.bg_music = game.add.audio("climax_music", 1, true).play();
             }
             assistant.enabled = false;
         }
@@ -220,6 +261,13 @@ var cashier_state = {
             this.money_ui_text.text = "$" + this.money_paid;
             this.UI_layer.x = game.camera.x;
             this.UI_layer.y = game.camera.y;
+    },
+    begin_exit: function(){
+        this.UI_layer.add(this.end_checkpoint);
+        this.end_checkpoint.x = 0;
+        this.end_checkpoint.y = 0;
+        this.end_checkpoint.scale = {x: game_w, y: game_h};
+        this.end_player_tween.start();
     },
     resize: function(){
     },

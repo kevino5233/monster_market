@@ -1,3 +1,16 @@
+WebFontConfig = {
+
+    //  'active' means all requested fonts have finished loading
+    //  We set a 1 second delay before calling 'createText'.
+    //  For some reason if we don't the browser cannot render the text the first time it's created.
+    //  The Google Fonts we want to load (specify as many as you like in the array)
+    google: {
+      families: ['Press Start 2P']
+    }
+
+};
+
+
 //==============================================================================
 //vital dimensions
 //==============================================================================
@@ -29,7 +42,7 @@ function UpdateCamera(camera, player) {
     var outside_deadzone_right = cam_diff_x - deadzone_w > deadzone_trig_w;
     var outside_deadzone_up = cam_diff_y < deadzone_trig_h;
     var outside_deadzone_down = cam_diff_y - deadzone_h > deadzone_trig_h;
-    //adjusts camer accordingly
+    //adjusts camera accordingly
     if (outside_deadzone_left || outside_deadzone_right){
         camera.x = player.x - deadzone_trig_w;
         if (outside_deadzone_right){
@@ -146,6 +159,20 @@ function LoadLevel(state, levelData)
             }
         }
     }
+	var padding = 10;
+	var obj_text = new Phaser.Text(game, 64, game_h - 64, state.objective);
+	obj_text.text.font = 'Press Start 2P';
+	obj_text.text.align = "right";
+	obj_text.text.fontSize = 16;
+	var obj_bg = new Phaser.Graphics(game, 0, 0);
+	obj_bg.beginFill(0xffffff);
+	obj_bg.drawRect(	obj_text.x - padding - 10,
+					 	obj_text.y - padding,
+						obj_text.width + padding*2 + 20,
+						obj_text.height + padding*2);
+	obj_bg.alpha = 0.5;
+	state.UI_layer.add(obj_text);
+	state.UI_layer.add(obj_bg);
 }
 //==============================================================================
 //game start
@@ -153,19 +180,6 @@ function LoadLevel(state, levelData)
 
 //create the game object
 var game = new Phaser.Game(800, 600, Phaser.AUTO);
-
-WebFontConfig = {
-
-    //  'active' means all requested fonts have finished loading
-    //  We set a 1 second delay before calling 'createText'.
-    //  For some reason if we don't the browser cannot render the text the first time it's created.
-    //  The Google Fonts we want to load (specify as many as you like in the array)
-    google: {
-      families: ['Press Start 2P']
-    }
-
-};
-
 
 game.state.add("boot", boot_state);
 game.state.add("load", load_state);

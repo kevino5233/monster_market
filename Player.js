@@ -42,8 +42,7 @@ Player.prototype.TakeDamage = function(damage){
 }
 
 Player.prototype.Invincible = function(){
-    return true;
-    //return this.tween_active || this.invincible_frames_for > 0;
+    return this.tween_active || this.invincible_frames_for > 0;
 }
 
 Player.prototype.update = function()
@@ -104,7 +103,7 @@ Player.prototype.update = function()
         if (this.Invincible() && this.invincible_frames_for > 0){
             this.invincible_frames_for -= 1;
         }
-        if (this.hearts.length >= 0 && this.health < this.hearts.length){
+        if (this.health > 0 && this.hearts.length >= 0 && this.health < this.hearts.length){
             if (Math.ceil(this.health) == this.hearts.length){
                 this.hearts[this.hearts.length - 1].animations.play("half");
             } else {

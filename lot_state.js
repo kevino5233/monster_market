@@ -1,4 +1,5 @@
 var lot_state = {
+	objective: "Go to the right and enter the grocery store.",
     level_data: {
         m_enemies: [
         { x: 700, y: 100 },
@@ -42,7 +43,7 @@ var lot_state = {
         LoadLevel(this, this.level_data);
         game.world.setBounds(0, 0, 2400, 600);
         this.background.create(0, 0, "lot_bg");
-        //this.bg_music = game.add.audio("lot_music", 1, true).play();
+        this.bg_music = game.add.audio("lot_music", 1, true).play();
         //load sprites
         //add  and set up player
         this.player_layer.add(new Player(game, 400, 300, this));
@@ -86,6 +87,7 @@ var lot_state = {
         game.physics.arcade.collide(this.player, this.envir_layer);
         if (!(this.end_checkpoint.x || this.end_checkpoint.y)){
             if (this.end_checkpoint.alpha >= 1){
+                this.bg_music.stop();
                 game.state.start("shop");
             } else {
                 this.end_checkpoint.alpha += 1/120;

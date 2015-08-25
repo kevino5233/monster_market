@@ -3,6 +3,7 @@ var load_state = {
         game.load.image("lot_bg", "assets/parking_lot.png");
         game.load.image("black", "assets/black.png");
         game.load.image("shelf", "assets/shelf.png");
+        game.load.image("shelf-v", "assets/shelf-v.png");
         game.load.image("large_shelf", "assets/large_shelf.png");
         game.load.image("large_v_shelf", "assets/large_v_shelf.png");
         game.load.image("shop_bg", "assets/shop.png");
@@ -21,6 +22,8 @@ var load_state = {
         game.load.spritesheet("cashier", "assets/cashier.png", 64, 128);
     	game.load.spritesheet("bottle", "assets/bottle.png", 32, 32);
     	game.load.audio("lot_music", "assets/parking.mp3");
+    	game.load.audio("shopping_music", "assets/shopping.mp3");
+    	game.load.audio("climax_music", "assets/climax.mp3");
     	game.load.audio("shop_music", "assets/shopping.mp3");
         game.load.script("webfont", "//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js");
     },
@@ -32,9 +35,9 @@ var load_state = {
     },
 
     create: function(){
-        //game.state.start("lot");
+        game.state.start("lot");
         //game.state.start("shop");
-        game.state.start("cashier");
+        //game.state.start("cashier");
     },
 
     update: function(){

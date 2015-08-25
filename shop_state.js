@@ -1,4 +1,5 @@
 var shop_state = {
+		objective: "Get your groceries. Press 'e' to search the shelves and talk to the shop assistant.",
         dialogueList : [
             [
                 "I'm sort of busy with the riots going on right now...",
@@ -104,6 +105,7 @@ var shop_state = {
 		game.world.setBounds(0, 0, 4000, 600);
 
 		this.background.add(new Phaser.Sprite(game, 0, 0, "shop_bg"));
+                this.bg_music = game.add.audio("shopping_music", 1, true).play();
 
 		this.player = new Player(game, 400, 300, this);
 		game.physics.enable(this.player, Phaser.Physics.ARCADE);
@@ -161,6 +163,8 @@ var shop_state = {
 	onWin: function()
 	{
 		// LOAD NEXT STATE HERE
+                this.bg_music.stop();
+		game.state.start("cashier");
 	},
 
 	preRender: function()
