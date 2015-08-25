@@ -63,7 +63,21 @@ var cashier_state = {
 
     loadRender: function(){
     },
+
+    onShopLoop: function()
+    {
+        this.bg_music.play("", 0, 1, true);
+    },
+
+    onRunLoop: function()
+    {
+        this.run_music.play("", 0, 1, true);
+    },
+
     create: function(){
+        this.bg_music = game.add.audio("shop_music");
+        this.bg_music.play("", 0, 1, true);
+        this.bg_music.onLoop.add(this.onShopLoop, this);
         //level config
         InitializeLayers(this);
         InitializeEvents(this);
@@ -192,6 +206,12 @@ var cashier_state = {
                 this.gunman.scale.x = -1;
                 this.gunman.animations.play("pickup");
                 this.objectiveUi.setObjective("RUN.");
+
+                this.bg_music.stop();
+                this.run_music = game.add.audio("run_music");
+                this.run_music.play("", 0, 0.35, true);
+                this.run_music.onLoop.add(this.onRunLoop, this);
+
             }
             assistant.enabled = false;
         }

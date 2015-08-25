@@ -96,7 +96,11 @@ var shop_state = {
 	},
 
 	create: function() 
-	{
+	{	
+		this.bg_music = game.add.audio("shop_music");
+        this.bg_music.play("", 0, 1, true);
+        this.bg_music.onLoop.add(this.onLoop, this);
+
 		InitializeLayers(this);
 		InitializeEvents(this);
 		LoadLevel(this, this.level_data);
@@ -126,6 +130,11 @@ var shop_state = {
 		this.objectiveUi = new ObjectiveUi(this, game, "Search the shelves or ask an assistant.");
 		this.UI_layer.add(this.objectiveUi);
 	},
+
+	onLoop: function()
+    {
+    	this.bg_music.play("", 0, 1, true);
+    },
 
 	update: function()
 	{
@@ -168,6 +177,7 @@ var shop_state = {
 
 	onWin: function()
 	{
+		this.bg_music.stop();
 		game.state.start("cashier");
 	},
 
